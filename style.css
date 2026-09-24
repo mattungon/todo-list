@@ -1,69 +1,73 @@
 :root {
-  --background: #171323;
-  --text: #fff9f4;
+    --background: #171323;
+    --text: #fff9f4;
 }
 
 * {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 body {
-  min-width: 320px;
-  min-height: 100vh;
-  margin: 0;
-  color: var(--text);
-  font-family: Arial, sans-serif;
-  background:
-    radial-gradient(
-      circle at 8% 8%,
-      rgba(255, 148, 197, 0.2),
-      transparent 25rem
-    ),
-    radial-gradient(
-      circle at 92% 10%,
-      rgba(169, 150, 255, 0.22),
-      transparent 24rem
-    ),
-    var(--background);
+    min-width: 320px;
+    min-height: 100vh;
+    margin: 0;
+    color: var(--text);
+    font-family: Arial, sans-serif;
+    background:
+        radial-gradient(
+            circle at 8% 8%,
+            rgba(255, 148, 197, 0.2),
+            transparent 25rem
+        ),
+        radial-gradient(
+            circle at 92% 10%,
+            rgba(169, 150, 255, 0.22),
+            transparent 24rem
+        ),
+        var(--background);
 }
 .app-shell {
-  display: grid;
-  min-height: 100vh;
-  padding: 42px 20px;
-  place-items: center;
+    display: grid;
+    min-height: 100vh;
+    padding: 42px 20px;
+    place-items: center;
 }
 
 .todo-app {
-  width: min(100%, 700px);
-  min-height: 170px;
-  padding: 34px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 28px;
-  background:
-    linear-gradient(
-      145deg,
-      rgba(48, 38, 69, 0.96),
-      rgba(35, 29, 52, 0.92)
+    width: min(100%, 700px);
+    min-height: 170px;
+    padding: 34px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 28px;
+    background: linear-gradient(
+        145deg,
+        rgba(48, 38, 69, 0.96),
+        rgba(35, 29, 52, 0.92)
     );
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
 }
 
 @media (max-width: 600px) {
-  .app-shell {
-    align-items: start;
-    padding: 16px 12px;
-  }
+    .app-shell {
+        align-items: start;
+        padding: 16px 12px;
+    }
 
-  .todo-app {
-    padding: 24px 18px;
-    border-radius: 22px;
-  }
-  #app-title {
-  margin: 0;
-  color: var(--text);
-  font-family: "Outfit", sans-serif;
-  font-size: clamp(2.1rem, 6vw, 2.9rem);
-  font-weight: 800;
-  letter-spacing: -0.06em;
-}
+    .todo-app {
+        padding: 24px 18px;
+        border-radius: 22px;
+    }
+    #app-title {
+        margin: 0;
+        color: var(--text);
+        font-family: "Outfit", sans-serif;
+        font-size: clamp(2.1rem, 6vw, 2.9rem);
+        font-weight: 800;
+        letter-spacing: -0.06em;
+    }
+    .app-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
 }
