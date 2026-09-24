@@ -547,6 +547,31 @@ select:focus-visible {
     gap: 10px;
   }
 }
+.priority-badge {
+  flex: 0 0 auto;
+  padding: 5px 8px;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.priority-low {
+  color: #89e6c4;
+  background: rgba(137, 230, 196, 0.14);
+}
+
+.priority-medium {
+  color: #ffd37a;
+  background: rgba(255, 211, 122, 0.14);
+}
+
+.priority-high {
+  color: #ff9eaa;
+  background: rgba(255, 158, 170, 0.14);
+}
 @media (prefers-reduced-motion: reduce) {
   .veyra {
     animation: none;
