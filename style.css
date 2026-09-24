@@ -334,3 +334,20 @@ select:focus-visible {
     margin: 16px 0 0;
     list-style: none;
 }
+.empty-state {
+    padding: 24px 18px;
+    margin: 16px 0 0;
+    border: 1px dashed var(--border);
+    border-radius: 17px;
+    color: var(--muted-text);
+    font-size: 0.92rem;
+    line-height: 1.6;
+    text-align: center;
+}
+
+.empty-state span {
+    display: inline-block;
+    margin-bottom: 4px;
+    color: var(--yellow);
+    font-size: 1.25rem;
+}
