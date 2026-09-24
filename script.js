@@ -17,8 +17,19 @@ function handleTaskSubmit(event) {
     }
 
     const li = document.createElement("li");
+    li.className = "task-item";
 
-    li.textContent = taskText;
+    const taskIcon = document.createElement("span");
+    taskIcon.className = "task-icon";
+    taskIcon.textContent = "✦";
+    taskIcon.setAttribute("aria-hidden", "true");
+
+    const taskLabel = document.createElement("span");
+    taskLabel.className = "task-text";
+    taskLabel.textContent = taskText;
+
+    li.appendChild(taskIcon);
+    li.appendChild(taskLabel);
 
     taskList.appendChild(li);
 
