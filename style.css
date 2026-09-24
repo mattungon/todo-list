@@ -1,1 +1,28 @@
-/* Momentum-todo-list styles will be added here. */
+:root {
+  --background: #171323;
+  --text: #fff9f4;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  color: var(--text);
+  font-family: Arial, sans-serif;
+  background:
+    radial-gradient(
+      circle at 8% 8%,
+      rgba(255, 148, 197, 0.2),
+      transparent 25rem
+    ),
+    radial-gradient(
+      circle at 92% 10%,
+      rgba(169, 150, 255, 0.22),
+      transparent 24rem
+    ),
+    var(--background);
+}
