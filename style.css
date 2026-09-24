@@ -26,3 +26,36 @@ body {
     ),
     var(--background);
 }
+.app-shell {
+  display: grid;
+  min-height: 100vh;
+  padding: 42px 20px;
+  place-items: center;
+}
+
+.todo-app {
+  width: min(100%, 700px);
+  min-height: 170px;
+  padding: 34px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 28px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(48, 38, 69, 0.96),
+      rgba(35, 29, 52, 0.92)
+    );
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
+}
+
+@media (max-width: 600px) {
+  .app-shell {
+    align-items: start;
+    padding: 16px 12px;
+  }
+
+  .todo-app {
+    padding: 24px 18px;
+    border-radius: 22px;
+  }
+}
