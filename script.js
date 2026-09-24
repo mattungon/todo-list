@@ -20,4 +20,7 @@ function handleTaskSubmit(event) {
     li.textContent = taskText;
 
     taskList.appendChild(li);
+
+    taskInput.value = "";
+    taskInput.focus();
 }
