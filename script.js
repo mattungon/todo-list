@@ -34,9 +34,20 @@ function handleTaskSubmit(event) {
     priorityBadge.className = `priority-badge priority-${priority}`;
     priorityBadge.textContent = priority;
 
+    const deleteButton = document.createElement("button");
+    deleteButton.className = "delete-task";
+    deleteButton.type = "button";
+    deleteButton.textContent = "×";
+    deleteButton.setAttribute("aria-label", `Delete task: ${taskText}`);
+
+    deleteButton.addEventListener("click", () => {
+        li.remove();
+    });
+
     li.appendChild(taskIcon);
     li.appendChild(taskLabel);
     li.appendChild(priorityBadge);
+    li.appendChild(deleteButton);
 
     taskList.appendChild(li);
 

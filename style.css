@@ -572,6 +572,38 @@ select:focus-visible {
   color: #ff9eaa;
   background: rgba(255, 158, 170, 0.14);
 }
+.delete-task {
+  display: grid;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  color: #c8bfd8;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1.35rem;
+  line-height: 1;
+  place-items: center;
+  transition:
+    color 160ms ease,
+    background 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.delete-task:hover {
+  border-color: rgba(255, 158, 170, 0.3);
+  color: #ff9eaa;
+  background: rgba(255, 158, 170, 0.12);
+  transform: scale(1.08);
+}
+
+.delete-task:focus-visible {
+  outline: 3px solid rgba(169, 150, 255, 0.55);
+  outline-offset: 2px;
+}
 @media (prefers-reduced-motion: reduce) {
   .veyra {
     animation: none;
