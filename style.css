@@ -496,6 +496,20 @@ select:focus-visible {
   clip-path: inset(50%);
   white-space: nowrap;
 }
+.veyra {
+  animation: veyra-float 3.4s ease-in-out infinite;
+}
+
+@keyframes veyra-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+
+  50% {
+    transform: translateY(-5px) rotate(2deg);
+  }
+}
 
 @media (max-width: 600px) {
   .app-shell {
@@ -512,11 +526,11 @@ select:focus-visible {
     align-items: flex-start;
   }
 
-  .veyra {
-    flex-basis: 54px;
-    transform: scale(0.9);
-    transform-origin: top left;
-  }
+ .veyra {
+  flex-basis: 54px;
+  width: 54px;
+  height: 54px;
+}
 
   .task-entry-row {
     align-items: stretch;
@@ -531,5 +545,10 @@ select:focus-visible {
     align-items: flex-start;
     flex-direction: column;
     gap: 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .veyra {
+    animation: none;
   }
 }
