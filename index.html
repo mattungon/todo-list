@@ -17,7 +17,19 @@
                         <h1 id="app-title">Momentum</h1>
                     </div>
                 </header>
-                <form id="task-form" class="task-form"></form>
+                <form id="task-form" class="task-form">
+                    <label class="sr-only" for="task-input">
+                        Enter a new task
+                    </label>
+
+                    <input
+                        id="task-input"
+                        type="text"
+                        placeholder="What needs doing?"
+                        autocomplete="off"
+                        maxlength="100"
+                    />
+                </form>
             </section>
         </main>
 
