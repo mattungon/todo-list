@@ -42,6 +42,10 @@ function handleTaskSubmit(event) {
 
     deleteButton.addEventListener("click", () => {
         li.remove();
+
+        if (taskList.childElementCount === 0) {
+            emptyState.hidden = false;
+        }
     });
 
     li.appendChild(taskIcon);
