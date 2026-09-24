@@ -6,7 +6,7 @@ taskForm.addEventListener("submit", handleTaskSubmit);
 function handleTaskSubmit(event) {
     event.preventDefault();
 
-    const taskText = taskInput.value;
+    const taskText = taskInput.value.trim();
 
     console.log(taskText);
 }
