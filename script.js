@@ -1,10 +1,27 @@
 const taskForm = document.querySelector("#task-form");
 const taskInput = document.querySelector("#task-input");
+const prioritySelect = document.querySelector("#priority-select");
 const taskList = document.querySelector("#task-list");
 const emptyState = document.querySelector("#empty-state");
-const prioritySelect = document.querySelector("#priority-select");
+const taskCount = document.querySelector("#task-count");
 
 taskForm.addEventListener("submit", handleTaskSubmit);
+
+function updateTaskCount() {
+    const count = taskList.childElementCount;
+
+    if (count === 0) {
+        taskCount.textContent = "No tasks yet";
+        return;
+    }
+
+    if (count === 1) {
+        taskCount.textContent = "1 task today";
+        return;
+    }
+
+    taskCount.textContent = `${count} tasks today`;
+}
 
 function handleTaskSubmit(event) {
     event.preventDefault();
@@ -43,6 +60,8 @@ function handleTaskSubmit(event) {
     deleteButton.addEventListener("click", () => {
         li.remove();
 
+        updateTaskCount();
+
         if (taskList.childElementCount === 0) {
             emptyState.hidden = false;
         }
@@ -54,6 +73,8 @@ function handleTaskSubmit(event) {
     li.appendChild(deleteButton);
 
     taskList.appendChild(li);
+
+    updateTaskCount();
 
     emptyState.hidden = true;
 

@@ -5,11 +5,9 @@
   --muted-text: #c2b8d0;
   --subtle-text: #9589a5;
   --border: #4b3e62;
-
   --purple: #a996ff;
   --yellow: #ffd45d;
   --pink: #ff94c5;
-
   --shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
 }
 
@@ -22,7 +20,6 @@ body {
   min-height: 100vh;
   margin: 0;
   color: var(--text);
-  font-family: "DM Sans", Arial, sans-serif;
   background:
     radial-gradient(
       circle at 8% 8%,
@@ -35,6 +32,7 @@ body {
       transparent 24rem
     ),
     var(--background);
+  font-family: "DM Sans", Arial, sans-serif;
 }
 
 button,
@@ -156,6 +154,7 @@ select:focus-visible {
   box-shadow:
     0 12px 20px rgba(27, 23, 54, 0.3),
     0 0 0 7px rgba(183, 226, 222, 0.14);
+  animation: veyra-float 3.4s ease-in-out infinite;
 }
 
 .veyra::before {
@@ -342,12 +341,13 @@ select:focus-visible {
   left: -80%;
   width: 45%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.4),
-    transparent
-  );
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent
+    );
   content: "";
   transform: skewX(-20deg);
   transition: left 500ms ease;
@@ -460,9 +460,17 @@ select:focus-visible {
   letter-spacing: -0.03em;
 }
 
+.task-count {
+  margin: 18px 0 10px;
+  color: var(--muted-text);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
 .empty-state {
-  padding: 24px 18px;
   margin: 16px 0 0;
+  padding: 24px 18px;
   border: 1px dashed var(--border);
   border-radius: 17px;
   color: var(--muted-text);
@@ -478,137 +486,18 @@ select:focus-visible {
   font-size: 1.25rem;
 }
 
+.empty-state[hidden] {
+  display: none;
+}
+
 .task-list {
   display: grid;
   gap: 10px;
-  padding: 0;
   margin: 16px 0 0;
+  padding: 0;
   list-style: none;
 }
 
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-.veyra {
-  animation: veyra-float 3.4s ease-in-out infinite;
-}
-
-@keyframes veyra-float {
-  0%,
-  100% {
-    transform: translateY(0) rotate(-2deg);
-  }
-
-  50% {
-    transform: translateY(-5px) rotate(2deg);
-  }
-}
-
-@media (max-width: 600px) {
-  .app-shell {
-    align-items: start;
-    padding: 16px 12px;
-  }
-
-  .todo-app {
-    padding: 24px 18px;
-    border-radius: 22px;
-  }
-
-  .companion-card {
-    align-items: flex-start;
-  }
-
- .veyra {
-  flex-basis: 54px;
-  width: 54px;
-  height: 54px;
-}
-
-  .task-entry-row {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .add-button {
-    width: 100%;
-  }
-
-  .task-options {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 10px;
-  }
-}
-.priority-badge {
-  flex: 0 0 auto;
-  padding: 5px 8px;
-  border-radius: 999px;
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  line-height: 1;
-  text-transform: uppercase;
-}
-
-.priority-low {
-  color: #89e6c4;
-  background: rgba(137, 230, 196, 0.14);
-}
-
-.priority-medium {
-  color: #ffd37a;
-  background: rgba(255, 211, 122, 0.14);
-}
-
-.priority-high {
-  color: #ff9eaa;
-  background: rgba(255, 158, 170, 0.14);
-}
-.delete-task {
-  display: grid;
-  flex: 0 0 30px;
-  width: 30px;
-  height: 30px;
-  padding: 0;
-  border: 1px solid transparent;
-  border-radius: 9px;
-  color: #c8bfd8;
-  background: transparent;
-  cursor: pointer;
-  font-size: 1.35rem;
-  line-height: 1;
-  place-items: center;
-  transition:
-    color 160ms ease,
-    background 160ms ease,
-    border-color 160ms ease,
-    transform 160ms ease;
-}
-
-.delete-task:hover {
-  border-color: rgba(255, 158, 170, 0.3);
-  color: #ff9eaa;
-  background: rgba(255, 158, 170, 0.12);
-  transform: scale(1.08);
-}
-
-.delete-task:focus-visible {
-  outline: 3px solid rgba(169, 150, 255, 0.55);
-  outline-offset: 2px;
-}
-@media (prefers-reduced-motion: reduce) {
-  .veyra {
-    animation: none;
-  }
-}
 .task-item {
   display: flex;
   gap: 11px;
@@ -647,8 +536,141 @@ select:focus-visible {
 .task-text {
   overflow: hidden;
   min-width: 0;
+  margin-right: auto;
   font-size: 0.94rem;
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.priority-badge {
+  flex: 0 0 auto;
+  padding: 5px 8px;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.priority-low {
+  color: #89e6c4;
+  background: rgba(137, 230, 196, 0.14);
+}
+
+.priority-medium {
+  color: #ffd37a;
+  background: rgba(255, 211, 122, 0.14);
+}
+
+.priority-high {
+  color: #ff9eaa;
+  background: rgba(255, 158, 170, 0.14);
+}
+
+.delete-task {
+  display: grid;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  color: #c8bfd8;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1.35rem;
+  line-height: 1;
+  place-items: center;
+  transition:
+    color 160ms ease,
+    background 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.delete-task:hover {
+  border-color: rgba(255, 158, 170, 0.3);
+  color: #ff9eaa;
+  background: rgba(255, 158, 170, 0.12);
+  transform: scale(1.08);
+}
+
+.delete-task:focus-visible {
+  outline: 3px solid rgba(169, 150, 255, 0.55);
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  border: 0;
+  white-space: nowrap;
+}
+
+@keyframes veyra-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+
+  50% {
+    transform: translateY(-5px) rotate(2deg);
+  }
+}
+
+@media (max-width: 600px) {
+  .app-shell {
+    align-items: start;
+    padding: 16px 12px;
+  }
+
+  .todo-app {
+    padding: 24px 18px;
+    border-radius: 22px;
+  }
+
+  .companion-card {
+    align-items: flex-start;
+  }
+
+  .veyra {
+    flex-basis: 54px;
+    width: 54px;
+    height: 54px;
+  }
+
+  .task-entry-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .add-button {
+    width: 100%;
+  }
+
+  .task-options {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .veyra {
+    animation: none;
+  }
+
+  .task-item,
+  .add-button,
+  .delete-task {
+    transition: none;
+  }
 }

@@ -1,124 +1,126 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta
-    name="description"
-    content="Momentum is a colorful interactive todo list."
-  />
-  <title>Momentum — Todo List</title>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+            name="description"
+            content="Momentum is a colorful interactive todo list."
+        />
+        <title>Momentum — Todo List</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
-    rel="stylesheet"
-  />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
+            rel="stylesheet"
+        />
 
-  <link rel="stylesheet" href="style.css" />
-</head>
+        <link rel="stylesheet" href="style.css" />
+    </head>
 
-<body>
-  <main class="app-shell">
-    <section class="todo-app">
-      <header class="app-header">
-        <div>
-          <p class="eyebrow">MY DAILY TASKS</p>
-          <h1 id="app-title">Momentum</h1>
-        </div>
-      </header>
+    <body>
+        <main class="app-shell">
+            <section class="todo-app">
+                <header class="app-header">
+                    <div>
+                        <p class="eyebrow">MY DAILY TASKS</p>
+                        <h1 id="app-title">Momentum</h1>
+                    </div>
+                </header>
 
-      <section class="companion-card" aria-live="polite">
-        <div class="veyra" aria-hidden="true">
-          <span class="veyra-hair veyra-hair-left"></span>
-          <span class="veyra-hair veyra-hair-right"></span>
+                <section class="companion-card" aria-live="polite">
+                    <div class="veyra" aria-hidden="true">
+                        <span class="veyra-hair veyra-hair-left"></span>
+                        <span class="veyra-hair veyra-hair-right"></span>
 
-          <span class="veyra-ear veyra-ear-left"></span>
-          <span class="veyra-ear veyra-ear-right"></span>
+                        <span class="veyra-ear veyra-ear-left"></span>
+                        <span class="veyra-ear veyra-ear-right"></span>
 
-          <span class="veyra-face">
-            <span class="veyra-eye veyra-eye-left"></span>
-            <span class="veyra-eye veyra-eye-right"></span>
-            <span class="veyra-mouth"></span>
-          </span>
+                        <span class="veyra-face">
+                            <span class="veyra-eye veyra-eye-left"></span>
+                            <span class="veyra-eye veyra-eye-right"></span>
+                            <span class="veyra-mouth"></span>
+                        </span>
 
-          <span class="veyra-cape"></span>
-        </div>
+                        <span class="veyra-cape"></span>
+                    </div>
 
-        <div class="companion-copy">
-          <p class="companion-label">YOUR TASK MAGE</p>
-          <h2>Veyra is unimpressed</h2>
+                    <div class="companion-copy">
+                        <p class="companion-label">YOUR TASK MAGE</p>
+                        <h2>Veyra is unimpressed</h2>
 
-          <p id="companion-message">
-            “Who do you think will finish those tasks—me? Move.”
-          </p>
-        </div>
-      </section>
+                        <p id="companion-message">
+                            “Who do you think will finish those tasks—me? Move.”
+                        </p>
+                    </div>
+                </section>
 
-      <form id="task-form" class="task-form">
-        <div class="task-entry-row">
-          <label class="sr-only" for="task-input">
-            Enter a new task
-          </label>
+                <form id="task-form" class="task-form">
+                    <div class="task-entry-row">
+                        <label class="sr-only" for="task-input">
+                            Enter a new task
+                        </label>
 
-          <input
-            id="task-input"
-            type="text"
-            placeholder="What needs doing?"
-            autocomplete="off"
-            maxlength="100"
-          />
+                        <input
+                            id="task-input"
+                            type="text"
+                            placeholder="What needs doing?"
+                            autocomplete="off"
+                            maxlength="100"
+                        />
 
-          <button type="submit" class="add-button">
-            <span aria-hidden="true">+</span>
-            Add task
-          </button>
-        </div>
+                        <button type="submit" class="add-button">
+                            <span aria-hidden="true">+</span>
+                            Add task
+                        </button>
+                    </div>
 
-        <div class="task-options">
-          <label class="priority-label" for="priority-select">
-            <span>Priority</span>
+                    <div class="task-options">
+                        <label class="priority-label" for="priority-select">
+                            <span>Priority</span>
 
-            <select id="priority-select">
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-              <option value="low">Low</option>
-            </select>
-          </label>
+                            <select id="priority-select">
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                                <option value="low">Low</option>
+                            </select>
+                        </label>
 
-          <label class="date-label" for="due-date">
-            <span>Due date</span>
+                        <label class="date-label" for="due-date">
+                            <span>Due date</span>
 
-            <input id="due-date" type="date" />
-          </label>
-        </div>
-      </form>
+                            <input id="due-date" type="date" />
+                        </label>
+                    </div>
+                </form>
 
-      <section class="task-section">
-        <div class="task-heading">
-          <div>
-            <p class="section-label">TASKS</p>
-            <h2>Your tasks</h2>
-          </div>
-        </div>
+                <section class="task-section">
+                    <div class="task-heading">
+                        <div>
+                            <p class="section-label">TASKS</p>
+                            <h2>Your tasks</h2>
+                        </div>
+                    </div>
+                    <p id="task-count" class="task-count" aria-live="polite">
+                        No tasks yet
+                    </p>
+                    <p id="empty-state" class="empty-state">
+                        <span aria-hidden="true">✦</span>
+                        Your list is clear.<br />
+                        Add a task when you are ready.
+                    </p>
 
-        <p id="empty-state" class="empty-state">
-          <span aria-hidden="true">✦</span>
-          Your list is clear.<br />
-          Add a task when you are ready.
-        </p>
+                    <ul
+                        id="task-list"
+                        class="task-list"
+                        role="list"
+                        aria-label="Todo tasks"
+                    ></ul>
+                </section>
+            </section>
+        </main>
 
-        <ul
-          id="task-list"
-          class="task-list"
-          role="list"
-          aria-label="Todo tasks"
-        ></ul>
-      </section>
-    </section>
-  </main>
-
-  <script src="script.js"></script>
-</body>
+        <script src="script.js"></script>
+    </body>
 </html>
