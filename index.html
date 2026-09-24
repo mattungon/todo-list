@@ -30,15 +30,23 @@
                         maxlength="100"
                     />
 
-                    <label class="priority-label" for="priority-select">
-                        Priority:
+                    <div class="task-options">
+                        <label class="priority-label" for="priority-select">
+                            <span>Priority</span>
 
-                        <select id="priority-select">
-                            <option value="low">Low</option>
-                            <option value="medium">Medium</option>
-                            <option value="high">High</option>
-                        </select>
-                    </label>
+                            <select id="priority-select">
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                                <option value="low">Low</option>
+                            </select>
+                        </label>
+
+                        <label class="date-label" for="due-date">
+                            <span>Due date</span>
+
+                            <input id="due-date" type="date" />
+                        </label>
+                    </div>
                 </form>
             </section>
         </main>
