@@ -14,5 +14,7 @@ function handleTaskSubmit(event) {
         return;
     }
 
-    console.log(taskText);
+    const li = document.createElement("li");
+
+    console.log(li);
 }
