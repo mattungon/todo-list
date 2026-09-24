@@ -1,12 +1,14 @@
 :root {
-  --background: #171323;
-  --surface: #272039;
-  --text: #fff9f4;
-  --border: #4b3e62;
-  --purple: #a996ff;
-  --yellow: #ffd45d;
-  --subtle-text: #9589a5;
-  --shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
+    --background: #171323;
+    --surface: #272039;
+    --text: #fff9f4;
+    --border: #4b3e62;
+    --purple: #a996ff;
+    --yellow: #ffd45d;
+    --subtle-text: #9589a5;
+    --shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
+}
+
 * {
     box-sizing: border-box;
 }
@@ -118,4 +120,32 @@ body {
     clip: rect(0 0 0 0);
     clip-path: inset(50%);
     white-space: nowrap;
+}
+.priority-label {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 10px;
+  color: var(--text);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.priority-label select {
+  height: 34px;
+  padding: 0 28px 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  outline: none;
+  color: var(--text);
+  background: var(--surface);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.priority-label select:hover,
+.priority-label select:focus {
+  border-color: var(--purple);
+  box-shadow: 0 0 0 4px rgba(169, 150, 255, 0.18);
 }
