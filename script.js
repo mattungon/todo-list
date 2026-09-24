@@ -14,7 +14,9 @@ function handleTaskSubmit(event) {
         return;
     }
 
-    const li = document.createElement("li");
+   const li = document.createElement("li");
 
-    console.log(li);
+   li.textContent = taskText;
+
+   console.log(li);
 }
