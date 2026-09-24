@@ -71,3 +71,10 @@ body {
         justify-content: space-between;
     }
 }
+.eyebrow {
+    margin: 0 0 4px;
+    color: var(--purple);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+}
