@@ -8,5 +8,11 @@ function handleTaskSubmit(event) {
 
     const taskText = taskInput.value.trim();
 
+    if (!taskText) {
+        alert("Write a task first. I am not doing your thinking for you.");
+        taskInput.focus();
+        return;
+    }
+
     console.log(taskText);
 }
