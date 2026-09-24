@@ -1,6 +1,7 @@
 const taskForm = document.querySelector("#task-form");
 const taskInput = document.querySelector("#task-input");
 const taskList = document.querySelector("#task-list");
+const emptyState = document.querySelector("#empty-state");
 
 taskForm.addEventListener("submit", handleTaskSubmit);
 
@@ -20,6 +21,8 @@ function handleTaskSubmit(event) {
     li.textContent = taskText;
 
     taskList.appendChild(li);
+
+    emptyState.hidden = true;
 
     taskInput.value = "";
     taskInput.focus();
