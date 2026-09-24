@@ -1,5 +1,6 @@
 const taskForm = document.querySelector("#task-form");
 const taskInput = document.querySelector("#task-input");
+const taskList = document.querySelector("#task-list");
 
 taskForm.addEventListener("submit", handleTaskSubmit);
 
@@ -14,9 +15,9 @@ function handleTaskSubmit(event) {
         return;
     }
 
-   const li = document.createElement("li");
+    const li = document.createElement("li");
 
-   li.textContent = taskText;
+    li.textContent = taskText;
 
-   console.log(li);
+    taskList.appendChild(li);
 }
