@@ -300,3 +300,31 @@ select:focus-visible {
     gap: 10px;
   }
 }
+.task-section {
+  margin-top: 32px;
+}
+
+.task-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 12px;
+  border-left: 4px solid var(--purple);
+}
+
+.section-label {
+  margin: 0;
+  color: var(--purple);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.task-heading h2 {
+  margin: 4px 0 0;
+  color: var(--text);
+  font-family: "Outfit", Arial, sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
