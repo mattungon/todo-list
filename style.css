@@ -501,6 +501,35 @@ select:focus-visible {
         transform 160ms ease;
 }
 
+.sort-label {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 12px;
+    color: var(--muted-text);
+    font-size: 0.76rem;
+    font-weight: 700;
+}
+
+.sort-label select {
+    min-height: 32px;
+    padding: 0 28px 0 10px;
+    border: 1px solid rgba(169, 150, 255, 0.34);
+    border-radius: 999px;
+    outline: none;
+    color: var(--text);
+    background: rgba(39, 32, 57, 0.86);
+    font-family: inherit;
+    font-size: 0.76rem;
+    font-weight: 700;
+}
+
+.sort-label select:hover,
+.sort-label select:focus {
+    border-color: rgba(169, 150, 255, 0.7);
+    box-shadow: 0 0 0 4px rgba(169, 150, 255, 0.14);
+}
+
 .clear-completed:hover:not(:disabled) {
     border-color: rgba(255, 148, 197, 0.72);
     color: #fff3f9;

@@ -9,10 +9,13 @@ const companionMessage = document.querySelector("#companion-message");
 const filterButtons = document.querySelectorAll(".filter-button");
 const clearCompletedButton = document.querySelector("#clear-completed");
 const saveStatus = document.querySelector("#save-status");
+const sortSelect = document.querySelector("#sort-select");
 
 const storageKey = "momentum-tasks";
+const sortStorageKey = "momentum-sort";
 let tasks = [];
 let currentFilter = "all";
+let currentSort = "newest";
 let saveStatusTimeout;
 
 const addTaskMessages = [
@@ -76,8 +79,58 @@ clearCompletedButton.addEventListener("click", () => {
 
     showCompanionMessage(clearCompletedMessages);
 });
+sortSelect.addEventListener("change", () => {
+    currentSort = sortSelect.value;
+    localStorage.setItem(sortStorageKey, currentSort);
+    renderTasks();
+});
 
 loadTasks();
+loadSortPreference();
+function getSortedTasks() {
+    const priorityOrder = {
+        high: 0,
+        medium: 1,
+        low: 2,
+    };
+
+    return [...tasks].sort((firstTask, secondTask) => {
+        if (currentSort === "due-date") {
+            const firstDate = firstTask.dueDate || "9999-12-31";
+            const secondDate = secondTask.dueDate || "9999-12-31";
+
+            return firstDate.localeCompare(secondDate);
+        }
+
+        if (currentSort === "priority") {
+            const priorityDifference =
+                priorityOrder[firstTask.priority] -
+                priorityOrder[secondTask.priority];
+
+            if (priorityDifference !== 0) {
+                return priorityDifference;
+            }
+
+            return firstTask.text.localeCompare(secondTask.text);
+        }
+
+        if (currentSort === "active-first") {
+            const completionDifference =
+                Number(firstTask.completed) - Number(secondTask.completed);
+
+            if (completionDifference !== 0) {
+                return completionDifference;
+            }
+
+            return firstTask.text.localeCompare(secondTask.text);
+        }
+
+        const firstCreatedAt = firstTask.createdAt || 0;
+        const secondCreatedAt = secondTask.createdAt || 0;
+
+        return secondCreatedAt - firstCreatedAt;
+    });
+}
 renderTasks();
 
 function saveTasks() {
@@ -99,6 +152,14 @@ function loadTasks() {
         tasks = Array.isArray(parsedTasks) ? parsedTasks : [];
     } catch {
         tasks = [];
+    }
+}
+function loadSortPreference() {
+    const savedSort = localStorage.getItem(sortStorageKey);
+
+    if (savedSort) {
+        currentSort = savedSort;
+        sortSelect.value = savedSort;
     }
 }
 
@@ -201,11 +262,11 @@ function setActiveFilter(selectedButton) {
 function renderTasks() {
     taskList.innerHTML = "";
 
-    tasks.forEach((task) => {
-        if (shouldShowTask(task)) {
-            taskList.appendChild(createTaskElement(task));
-        }
-    });
+   getSortedTasks().forEach((task) => {
+       if (shouldShowTask(task)) {
+           taskList.appendChild(createTaskElement(task));
+       }
+   });
 
     updateTaskCount();
     emptyState.hidden = tasks.length !== 0;
@@ -517,6 +578,7 @@ function handleTaskSubmit(event) {
         priority: prioritySelect.value,
         dueDate: dueDateInput.value,
         completed: false,
+        createdAt: Date.now(),
     };
 
     tasks.push(newTask);
