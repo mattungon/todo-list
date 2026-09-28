@@ -24,17 +24,51 @@ function updateTaskCount() {
     taskCount.textContent = `${count} tasks today`;
 }
 
-function formatDueDate(dateValue) {
+function getDueDateDetails(dateValue) {
     if (!dateValue) {
-        return "No due date";
+        return {
+            text: "No due date",
+            status: "none",
+        };
     }
 
-    const date = new Date(`${dateValue}T00:00:00`);
+    const dueDate = new Date(`${dateValue}T00:00:00`);
+    const today = new Date();
 
-    return date.toLocaleDateString(undefined, {
-        month: "short",
-        day: "numeric",
-    });
+    dueDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+
+    if (dueDate.getTime() < today.getTime()) {
+        return {
+            text: "Overdue",
+            status: "overdue",
+        };
+    }
+
+    if (dueDate.getTime() === today.getTime()) {
+        return {
+            text: "Due today",
+            status: "today",
+        };
+    }
+
+    if (dueDate.getTime() === tomorrow.getTime()) {
+        return {
+            text: "Due tomorrow",
+            status: "tomorrow",
+        };
+    }
+
+    return {
+        text: `Due ${dueDate.toLocaleDateString(undefined, {
+            month: "short",
+            day: "numeric",
+        })}`,
+        status: "future",
+    };
 }
 
 function handleTaskSubmit(event) {
@@ -66,9 +100,11 @@ function handleTaskSubmit(event) {
     priorityBadge.className = `priority-badge priority-${priority}`;
     priorityBadge.textContent = priority;
 
+    const dueDateDetails = getDueDateDetails(dueDate);
+
     const dueDateLabel = document.createElement("span");
-    dueDateLabel.className = "due-date";
-    dueDateLabel.textContent = formatDueDate(dueDate);
+    dueDateLabel.className = `due-date due-date-${dueDateDetails.status}`;
+    dueDateLabel.textContent = dueDateDetails.text;
 
     const deleteButton = document.createElement("button");
     deleteButton.className = "delete-task";

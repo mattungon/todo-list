@@ -577,6 +577,36 @@ select:focus-visible {
   white-space: nowrap;
 }
 
+.due-date-none {
+  color: var(--subtle-text);
+}
+
+.due-date-today {
+  color: var(--yellow);
+}
+
+.due-date-tomorrow {
+  color: #91ead4;
+}
+
+.due-date-overdue {
+  color: #ff9eaa;
+}
+
+.due-date-overdue::before {
+  content: "!";
+  display: inline-grid;
+  width: 15px;
+  height: 15px;
+  margin-right: 4px;
+  border-radius: 50%;
+  color: #2a1723;
+  background: #ff9eaa;
+  font-size: 0.65rem;
+  font-weight: 800;
+  line-height: 1;
+  place-items: center;
+}
 .delete-task {
   display: grid;
   flex: 0 0 30px;
