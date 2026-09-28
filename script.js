@@ -9,6 +9,8 @@ const companionMessage = document.querySelector("#companion-message");
 const filterButtons = document.querySelectorAll(".filter-button");
 const clearCompletedButton = document.querySelector("#clear-completed");
 
+const storageKey = "momentum-tasks";
+let tasks = [];
 let currentFilter = "all";
 
 const addTaskMessages = [
@@ -42,6 +44,7 @@ const incompleteTaskMessages = [
     "Unfinished again? Veyra has questions.",
     "Restored. Finish it when you are ready.",
 ];
+
 const clearCompletedMessages = [
     "Clean slate. Your completed tasks have been archived to nowhere.",
     "Cleared. Veyra approves of removing evidence.",
@@ -53,30 +56,48 @@ taskForm.addEventListener("submit", handleTaskSubmit);
 filterButtons.forEach((button) => {
     button.addEventListener("click", () => {
         currentFilter = button.dataset.filter;
-
         setActiveFilter(button);
-        updateTaskVisibility();
+        renderTasks();
     });
 });
 
 clearCompletedButton.addEventListener("click", () => {
-    const completedTasks = taskList.querySelectorAll(".task-completed");
+    tasks = tasks.filter((task) => !task.completed);
 
-    completedTasks.forEach((task) => {
-        task.remove();
-    });
+    saveTasks();
+    renderTasks();
 
-    updateTaskCount();
-    updateTaskVisibility();
-
-    if (taskList.childElementCount === 0) {
-        emptyState.hidden = false;
+    if (tasks.length === 0) {
         showCompanionMessage(emptyTaskMessages);
         return;
     }
 
     showCompanionMessage(clearCompletedMessages);
 });
+
+loadTasks();
+renderTasks();
+
+function saveTasks() {
+    localStorage.setItem(storageKey, JSON.stringify(tasks));
+}
+
+function loadTasks() {
+    const savedTasks = localStorage.getItem(storageKey);
+
+    if (!savedTasks) {
+        tasks = [];
+        return;
+    }
+
+    try {
+        const parsedTasks = JSON.parse(savedTasks);
+
+        tasks = Array.isArray(parsedTasks) ? parsedTasks : [];
+    } catch {
+        tasks = [];
+    }
+}
 
 function showCompanionMessage(messages) {
     const randomIndex = Math.floor(Math.random() * messages.length);
@@ -85,8 +106,8 @@ function showCompanionMessage(messages) {
 }
 
 function updateTaskCount() {
-    const totalTasks = taskList.childElementCount;
-    const completedTasks = taskList.querySelectorAll(".task-completed").length;
+    const totalTasks = tasks.length;
+    const completedTasks = tasks.filter((task) => task.completed).length;
 
     clearCompletedButton.disabled = completedTasks === 0;
 
@@ -147,19 +168,12 @@ function getDueDateDetails(dateValue) {
     };
 }
 
-function updateTaskVisibility() {
-    const taskItems = taskList.querySelectorAll(".task-item");
-
-    taskItems.forEach((taskItem) => {
-        const isCompleted = taskItem.classList.contains("task-completed");
-
-        const shouldShow =
-            currentFilter === "all" ||
-            (currentFilter === "active" && !isCompleted) ||
-            (currentFilter === "completed" && isCompleted);
-
-        taskItem.hidden = !shouldShow;
-    });
+function shouldShowTask(task) {
+    return (
+        currentFilter === "all" ||
+        (currentFilter === "active" && !task.completed) ||
+        (currentFilter === "completed" && task.completed)
+    );
 }
 
 function setActiveFilter(selectedButton) {
@@ -171,55 +185,49 @@ function setActiveFilter(selectedButton) {
     });
 }
 
-function handleTaskSubmit(event) {
-    event.preventDefault();
+function renderTasks() {
+    taskList.innerHTML = "";
 
-    const taskText = taskInput.value.trim();
-    const priority = prioritySelect.value;
-    const dueDate = dueDateInput.value;
+    tasks.forEach((task) => {
+        if (shouldShowTask(task)) {
+            taskList.appendChild(createTaskElement(task));
+        }
+    });
 
-    if (!taskText) {
-        alert("Write a task first. I am not doing your thinking for you.");
-        taskInput.focus();
-        return;
-    }
+    updateTaskCount();
+    emptyState.hidden = tasks.length !== 0;
+}
 
+function createTaskElement(task) {
     const li = document.createElement("li");
     li.className = "task-item";
+
+    if (task.completed) {
+        li.classList.add("task-completed");
+    }
 
     const completeButton = document.createElement("button");
     completeButton.className = "complete-task";
     completeButton.type = "button";
-    completeButton.textContent = "✓";
+    completeButton.textContent = task.completed ? "↺" : "✓";
     completeButton.setAttribute(
         "aria-label",
-        `Mark task complete: ${taskText}`,
+        task.completed
+            ? `Mark task incomplete: ${task.text}`
+            : `Mark task complete: ${task.text}`,
     );
-    completeButton.setAttribute("aria-pressed", "false");
+    completeButton.setAttribute("aria-pressed", String(task.completed));
 
     completeButton.addEventListener("click", () => {
-        const isCompleted = li.classList.toggle("task-completed");
+        task.completed = !task.completed;
 
-        updateTaskCount();
-        updateTaskVisibility();
+        saveTasks();
+        renderTasks();
 
-        completeButton.setAttribute("aria-pressed", String(isCompleted));
-        completeButton.textContent = isCompleted ? "↺" : "✓";
-
-        if (isCompleted) {
-            completeButton.setAttribute(
-                "aria-label",
-                `Mark task incomplete: ${taskText}`,
-            );
-
+        if (task.completed) {
             showCompanionMessage(completeTaskMessages);
             return;
         }
-
-        completeButton.setAttribute(
-            "aria-label",
-            `Mark task complete: ${taskText}`,
-        );
 
         showCompanionMessage(incompleteTaskMessages);
     });
@@ -231,13 +239,13 @@ function handleTaskSubmit(event) {
 
     const taskLabel = document.createElement("span");
     taskLabel.className = "task-text";
-    taskLabel.textContent = taskText;
+    taskLabel.textContent = task.text;
 
     const priorityBadge = document.createElement("span");
-    priorityBadge.className = `priority-badge priority-${priority}`;
-    priorityBadge.textContent = priority;
+    priorityBadge.className = `priority-badge priority-${task.priority}`;
+    priorityBadge.textContent = task.priority;
 
-    const dueDateDetails = getDueDateDetails(dueDate);
+    const dueDateDetails = getDueDateDetails(task.dueDate);
 
     const dueDateLabel = document.createElement("span");
     dueDateLabel.className = `due-date due-date-${dueDateDetails.status}`;
@@ -247,16 +255,15 @@ function handleTaskSubmit(event) {
     deleteButton.className = "delete-task";
     deleteButton.type = "button";
     deleteButton.textContent = "×";
-    deleteButton.setAttribute("aria-label", `Delete task: ${taskText}`);
+    deleteButton.setAttribute("aria-label", `Delete task: ${task.text}`);
 
     deleteButton.addEventListener("click", () => {
-        li.remove();
+        tasks = tasks.filter((currentTask) => currentTask.id !== task.id);
 
-        updateTaskCount();
-        updateTaskVisibility();
+        saveTasks();
+        renderTasks();
 
-        if (taskList.childElementCount === 0) {
-            emptyState.hidden = false;
+        if (tasks.length === 0) {
             showCompanionMessage(emptyTaskMessages);
             return;
         }
@@ -271,13 +278,33 @@ function handleTaskSubmit(event) {
     li.appendChild(dueDateLabel);
     li.appendChild(deleteButton);
 
-    taskList.appendChild(li);
+    return li;
+}
 
-    updateTaskCount();
-    updateTaskVisibility();
+function handleTaskSubmit(event) {
+    event.preventDefault();
+
+    const taskText = taskInput.value.trim();
+
+    if (!taskText) {
+        alert("Write a task first. I am not doing your thinking for you.");
+        taskInput.focus();
+        return;
+    }
+
+    const newTask = {
+        id: crypto.randomUUID(),
+        text: taskText,
+        priority: prioritySelect.value,
+        dueDate: dueDateInput.value,
+        completed: false,
+    };
+
+    tasks.push(newTask);
+
+    saveTasks();
+    renderTasks();
     showCompanionMessage(addTaskMessages);
-
-    emptyState.hidden = true;
 
     taskInput.value = "";
     dueDateInput.value = "";
