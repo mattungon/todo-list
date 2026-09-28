@@ -331,6 +331,63 @@ function startEditingPriority(task, priorityBadge) {
     prioritySelect.focus();
 }
 
+function startEditingDueDate(task, dueDateLabel) {
+    const dueDateEditor = document.createElement("div");
+    dueDateEditor.className = "due-date-editor";
+
+    const dueDateInput = document.createElement("input");
+    dueDateInput.className = "due-date-input";
+    dueDateInput.type = "date";
+    dueDateInput.value = task.dueDate;
+    dueDateInput.setAttribute("aria-label", `Change due date for ${task.text}`);
+
+    const clearDateButton = document.createElement("button");
+    clearDateButton.className = "clear-date";
+    clearDateButton.type = "button";
+    clearDateButton.textContent = "Clear";
+    clearDateButton.setAttribute(
+        "aria-label",
+        `Clear due date for ${task.text}`,
+    );
+
+    function finishDueDateEditing(shouldSave) {
+        if (shouldSave) {
+            task.dueDate = dueDateInput.value;
+            saveTasks();
+
+            showCompanionMessage([
+                "Due date updated. Time is now officially watching you.",
+                "New deadline noted. Veyra expects results.",
+                "Date changed. Do not pretend you did not see it.",
+            ]);
+        }
+
+        renderTasks();
+    }
+
+    dueDateInput.addEventListener("change", () => {
+        finishDueDateEditing(true);
+    });
+
+    dueDateInput.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+            finishDueDateEditing(false);
+        }
+    });
+
+    clearDateButton.addEventListener("click", () => {
+        dueDateInput.value = "";
+        finishDueDateEditing(true);
+    });
+
+    dueDateLabel.replaceWith(dueDateEditor);
+
+    dueDateEditor.appendChild(dueDateInput);
+    dueDateEditor.appendChild(clearDateButton);
+
+    dueDateInput.focus();
+}
+
 function createTaskElement(task) {
     const li = document.createElement("li");
     li.className = "task-item";
@@ -389,9 +446,18 @@ function createTaskElement(task) {
 
     const dueDateDetails = getDueDateDetails(task.dueDate);
 
-    const dueDateLabel = document.createElement("span");
+    const dueDateLabel = document.createElement("button");
     dueDateLabel.className = `due-date due-date-${dueDateDetails.status}`;
+    dueDateLabel.type = "button";
     dueDateLabel.textContent = dueDateDetails.text;
+    dueDateLabel.setAttribute(
+        "aria-label",
+        `Change due date for ${task.text}. Current date: ${dueDateDetails.text}`,
+    );
+
+    dueDateLabel.addEventListener("click", () => {
+        startEditingDueDate(task, dueDateLabel);
+    });
 
     const editButton = document.createElement("button");
     editButton.className = "edit-task";

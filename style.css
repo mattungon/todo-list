@@ -756,6 +756,71 @@ button.priority-badge:focus-visible {
     place-items: center;
 }
 
+button.due-date {
+    padding: 0;
+    border: 0;
+    cursor: pointer;
+    background: transparent;
+    font-family: inherit;
+    text-align: left;
+    transition:
+        color 160ms ease,
+        filter 160ms ease,
+        transform 160ms ease;
+}
+
+button.due-date:hover {
+    filter: brightness(1.2);
+    transform: translateY(-1px);
+}
+
+button.due-date:focus-visible {
+    outline: 3px solid rgba(169, 150, 255, 0.55);
+    outline-offset: 2px;
+}
+
+.due-date-editor {
+    display: flex;
+    flex: 0 0 auto;
+    gap: 5px;
+    align-items: center;
+}
+
+.due-date-input {
+    width: 132px;
+    min-height: 30px;
+    padding: 0 7px;
+    border: 1px solid rgba(169, 150, 255, 0.58);
+    border-radius: 8px;
+    outline: none;
+    color: var(--text);
+    background: var(--surface);
+    font-family: inherit;
+    font-size: 0.74rem;
+}
+
+.due-date-input:focus {
+    border-color: var(--purple);
+    box-shadow: 0 0 0 4px rgba(169, 150, 255, 0.18);
+}
+
+.clear-date {
+    min-height: 30px;
+    padding: 0 7px;
+    border: 1px solid rgba(194, 184, 208, 0.25);
+    border-radius: 8px;
+    color: var(--muted-text);
+    background: transparent;
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+.clear-date:hover {
+    border-color: rgba(255, 158, 170, 0.45);
+    color: #ffb0d2;
+    background: rgba(255, 148, 197, 0.1);
+}
+
 .delete-task {
     display: grid;
     flex: 0 0 30px;
@@ -995,6 +1060,10 @@ button.priority-badge:focus-visible {
     .filter-button,
     .clear-completed,
     .save-status {
+        transition: none;
+    }
+    button.due-date,
+    .clear-date {
         transition: none;
     }
 }
