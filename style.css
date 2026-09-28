@@ -569,6 +569,14 @@ select:focus-visible {
   background: rgba(255, 158, 170, 0.14);
 }
 
+.due-date {
+  flex: 0 0 auto;
+  color: var(--muted-text);
+  font-size: 0.76rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 .delete-task {
   display: grid;
   flex: 0 0 30px;

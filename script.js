@@ -1,6 +1,7 @@
 const taskForm = document.querySelector("#task-form");
 const taskInput = document.querySelector("#task-input");
 const prioritySelect = document.querySelector("#priority-select");
+const dueDateInput = document.querySelector("#due-date");
 const taskList = document.querySelector("#task-list");
 const emptyState = document.querySelector("#empty-state");
 const taskCount = document.querySelector("#task-count");
@@ -23,11 +24,25 @@ function updateTaskCount() {
     taskCount.textContent = `${count} tasks today`;
 }
 
+function formatDueDate(dateValue) {
+    if (!dateValue) {
+        return "No due date";
+    }
+
+    const date = new Date(`${dateValue}T00:00:00`);
+
+    return date.toLocaleDateString(undefined, {
+        month: "short",
+        day: "numeric",
+    });
+}
+
 function handleTaskSubmit(event) {
     event.preventDefault();
 
     const taskText = taskInput.value.trim();
     const priority = prioritySelect.value;
+    const dueDate = dueDateInput.value;
 
     if (!taskText) {
         alert("Write a task first. I am not doing your thinking for you.");
@@ -51,6 +66,10 @@ function handleTaskSubmit(event) {
     priorityBadge.className = `priority-badge priority-${priority}`;
     priorityBadge.textContent = priority;
 
+    const dueDateLabel = document.createElement("span");
+    dueDateLabel.className = "due-date";
+    dueDateLabel.textContent = formatDueDate(dueDate);
+
     const deleteButton = document.createElement("button");
     deleteButton.className = "delete-task";
     deleteButton.type = "button";
@@ -70,6 +89,7 @@ function handleTaskSubmit(event) {
     li.appendChild(taskIcon);
     li.appendChild(taskLabel);
     li.appendChild(priorityBadge);
+    li.appendChild(dueDateLabel);
     li.appendChild(deleteButton);
 
     taskList.appendChild(li);
@@ -79,5 +99,6 @@ function handleTaskSubmit(event) {
     emptyState.hidden = true;
 
     taskInput.value = "";
+    dueDateInput.value = "";
     taskInput.focus();
 }
