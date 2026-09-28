@@ -5,9 +5,35 @@ const dueDateInput = document.querySelector("#due-date");
 const taskList = document.querySelector("#task-list");
 const emptyState = document.querySelector("#empty-state");
 const taskCount = document.querySelector("#task-count");
+const companionMessage = document.querySelector("#companion-message");
 
 taskForm.addEventListener("submit", handleTaskSubmit);
 
+const addTaskMessages = [
+    "Another task? Fine. Put it on the list.",
+    "Good. Momentum is built one task at a time.",
+    "A plan. How unexpectedly responsible of you.",
+    "Added. Now do not just admire the list.",
+];
+
+const deleteTaskMessages = [
+    "Gone. Try not to make a habit of it.",
+    "Removed. One less thing for future-you to avoid.",
+    "Deleted. I saw nothing.",
+    "That task has left the realm of possibility.",
+];
+
+const emptyTaskMessages = [
+    "Nothing left? Suspiciously productive.",
+    "The list is clear. Enjoy this rare victory.",
+    "No tasks remain. Veyra is almost impressed.",
+];
+
+function showCompanionMessage(messages) {
+    const randomIndex = Math.floor(Math.random() * messages.length);
+
+    companionMessage.textContent = messages[randomIndex];
+}
 function updateTaskCount() {
     const count = taskList.childElementCount;
 
@@ -119,7 +145,11 @@ function handleTaskSubmit(event) {
 
         if (taskList.childElementCount === 0) {
             emptyState.hidden = false;
+            showCompanionMessage(emptyTaskMessages);
+            return;
         }
+
+        showCompanionMessage(deleteTaskMessages);
     });
 
     li.appendChild(taskIcon);
@@ -131,7 +161,7 @@ function handleTaskSubmit(event) {
     taskList.appendChild(li);
 
     updateTaskCount();
-
+    showCompanionMessage(addTaskMessages);
     emptyState.hidden = true;
 
     taskInput.value = "";
