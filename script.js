@@ -35,19 +35,17 @@ function showCompanionMessage(messages) {
     companionMessage.textContent = messages[randomIndex];
 }
 function updateTaskCount() {
-    const count = taskList.childElementCount;
+    const totalTasks = taskList.childElementCount;
+    const completedTasks = taskList.querySelectorAll(".task-completed").length;
 
-    if (count === 0) {
+    if (totalTasks === 0) {
         taskCount.textContent = "No tasks yet";
         return;
     }
 
-    if (count === 1) {
-        taskCount.textContent = "1 task today";
-        return;
-    }
+    const taskWord = totalTasks === 1 ? "task" : "tasks";
 
-    taskCount.textContent = `${count} tasks today`;
+    taskCount.textContent = `${completedTasks} of ${totalTasks} ${taskWord} complete`;
 }
 
 function getDueDateDetails(dateValue) {
@@ -138,6 +136,8 @@ function handleTaskSubmit(event) {
     completeButton.addEventListener("click", () => {
         const isCompleted = li.classList.toggle("task-completed");
 
+        updateTaskCount();
+        
         completeButton.setAttribute("aria-pressed", String(isCompleted));
         completeButton.textContent = isCompleted ? "↺" : "✓";
 
