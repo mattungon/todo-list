@@ -125,6 +125,45 @@ function handleTaskSubmit(event) {
     const priorityBadge = document.createElement("span");
     priorityBadge.className = `priority-badge priority-${priority}`;
     priorityBadge.textContent = priority;
+    const completeButton = document.createElement("button");
+    completeButton.className = "complete-task";
+    completeButton.type = "button";
+    completeButton.textContent = "✓";
+    completeButton.setAttribute(
+        "aria-label",
+        `Mark task complete: ${taskText}`,
+    );
+    completeButton.setAttribute("aria-pressed", "false");
+
+    completeButton.addEventListener("click", () => {
+        const isCompleted = li.classList.toggle("task-completed");
+
+        completeButton.setAttribute("aria-pressed", String(isCompleted));
+        completeButton.textContent = isCompleted ? "↺" : "✓";
+
+        if (isCompleted) {
+            completeButton.setAttribute(
+                "aria-label",
+                `Mark task incomplete: ${taskText}`,
+            );
+            showCompanionMessage([
+                "Completed. Veyra reluctantly approves.",
+                "One task down. Keep the streak alive.",
+                "Done. See? You are capable of progress.",
+            ]);
+            return;
+        }
+
+        completeButton.setAttribute(
+            "aria-label",
+            `Mark task complete: ${taskText}`,
+        );
+        showCompanionMessage([
+            "Back on the list. No judgment. Much.",
+            "Unfinished again? Veyra has questions.",
+            "Restored. Finish it when you are ready.",
+        ]);
+    });
 
     const dueDateDetails = getDueDateDetails(dueDate);
 
@@ -152,6 +191,7 @@ function handleTaskSubmit(event) {
         showCompanionMessage(deleteTaskMessages);
     });
 
+    li.appendChild(completeButton);
     li.appendChild(taskIcon);
     li.appendChild(taskLabel);
     li.appendChild(priorityBadge);

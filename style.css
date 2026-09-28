@@ -607,6 +607,67 @@ select:focus-visible {
   line-height: 1;
   place-items: center;
 }
+.complete-task {
+  display: grid;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid rgba(169, 150, 255, 0.5);
+  border-radius: 50%;
+  color: transparent;
+  background: transparent;
+  font-size: 0.9rem;
+  font-weight: 800;
+  line-height: 1;
+  place-items: center;
+  transition:
+    color 160ms ease,
+    background 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.complete-task:hover {
+  border-color: var(--purple);
+  background: rgba(169, 150, 255, 0.14);
+  transform: scale(1.08);
+}
+
+.complete-task:focus-visible {
+  outline: 3px solid rgba(169, 150, 255, 0.55);
+  outline-offset: 2px;
+}
+
+.task-completed {
+  border-color: rgba(137, 230, 196, 0.26);
+  background: rgba(48, 78, 72, 0.28);
+  opacity: 0.74;
+}
+
+.task-completed .task-text {
+  color: var(--muted-text);
+  text-decoration: line-through;
+  text-decoration-color: rgba(137, 230, 196, 0.7);
+  text-decoration-thickness: 2px;
+}
+
+.task-completed .task-icon {
+  color: #89e6c4;
+  background: rgba(137, 230, 196, 0.14);
+}
+
+.task-completed .complete-task {
+  border-color: #89e6c4;
+  color: #183b35;
+  background: #89e6c4;
+}
+
+.task-completed .priority-badge,
+.task-completed .due-date {
+  opacity: 0.65;
+}
+
 .delete-task {
   display: grid;
   flex: 0 0 30px;
