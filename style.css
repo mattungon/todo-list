@@ -736,6 +736,88 @@ select:focus-visible {
         border-color 160ms ease,
         transform 160ms ease;
 }
+.edit-task {
+    display: grid;
+    flex: 0 0 30px;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    color: var(--muted-text);
+    background: transparent;
+    font-size: 1rem;
+    line-height: 1;
+    place-items: center;
+    transition:
+        color 160ms ease,
+        background 160ms ease,
+        border-color 160ms ease,
+        transform 160ms ease;
+}
+
+.edit-task:hover {
+    border-color: rgba(169, 150, 255, 0.35);
+    color: var(--purple);
+    background: rgba(169, 150, 255, 0.12);
+    transform: scale(1.08);
+}
+
+.edit-task:focus-visible {
+    outline: 3px solid rgba(169, 150, 255, 0.55);
+    outline-offset: 2px;
+}
+
+.task-edit-input {
+    width: 100%;
+    min-width: 0;
+    padding: 7px 9px;
+    border: 1px solid var(--purple);
+    border-radius: 9px;
+    outline: none;
+    color: var(--text);
+    background: rgba(23, 19, 35, 0.82);
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.task-edit-actions {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.save-edit,
+.cancel-edit {
+    min-height: 28px;
+    padding: 0 8px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    font-weight: 800;
+}
+
+.save-edit {
+    border: 1px solid rgba(137, 230, 196, 0.42);
+    color: #153630;
+    background: #89e6c4;
+}
+
+.cancel-edit {
+    border: 1px solid rgba(194, 184, 208, 0.28);
+    color: var(--muted-text);
+    background: transparent;
+}
+
+.save-edit:hover {
+    filter: brightness(1.08);
+}
+
+.cancel-edit:hover {
+    border-color: rgba(194, 184, 208, 0.5);
+    color: var(--text);
+    background: rgba(194, 184, 208, 0.1);
+}
 
 .delete-task:hover {
     border-color: rgba(255, 158, 170, 0.3);
@@ -867,6 +949,9 @@ select:focus-visible {
     .add-button,
     .delete-task,
     .complete-task,
+    .edit-task,
+    .save-edit,
+    .cancel-edit,
     .filter-button,
     .clear-completed,
     .save-status {

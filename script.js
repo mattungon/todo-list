@@ -211,6 +211,66 @@ function renderTasks() {
     emptyState.hidden = tasks.length !== 0;
 }
 
+function startEditingTask(task, taskLabel) {
+    const editInput = document.createElement("input");
+    editInput.className = "task-edit-input";
+    editInput.type = "text";
+    editInput.value = task.text;
+    editInput.maxLength = 100;
+    editInput.setAttribute("aria-label", "Edit task title");
+
+    const editActions = document.createElement("div");
+    editActions.className = "task-edit-actions";
+
+    const saveButton = document.createElement("button");
+    saveButton.className = "save-edit";
+    saveButton.type = "button";
+    saveButton.textContent = "Save";
+
+    const cancelButton = document.createElement("button");
+    cancelButton.className = "cancel-edit";
+    cancelButton.type = "button";
+    cancelButton.textContent = "Cancel";
+
+    function finishEditing(shouldSave) {
+        const newText = editInput.value.trim();
+
+        if (shouldSave && newText) {
+            task.text = newText;
+            saveTasks();
+        }
+
+        renderTasks();
+    }
+
+    saveButton.addEventListener("click", () => {
+        finishEditing(true);
+    });
+
+    cancelButton.addEventListener("click", () => {
+        finishEditing(false);
+    });
+
+    editInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            finishEditing(true);
+        }
+
+        if (event.key === "Escape") {
+            finishEditing(false);
+        }
+    });
+
+    taskLabel.replaceWith(editInput);
+
+    editActions.appendChild(saveButton);
+    editActions.appendChild(cancelButton);
+    editInput.after(editActions);
+
+    editInput.focus();
+    editInput.select();
+}
+
 function createTaskElement(task) {
     const li = document.createElement("li");
     li.className = "task-item";
@@ -264,6 +324,16 @@ function createTaskElement(task) {
     dueDateLabel.className = `due-date due-date-${dueDateDetails.status}`;
     dueDateLabel.textContent = dueDateDetails.text;
 
+    const editButton = document.createElement("button");
+    editButton.className = "edit-task";
+    editButton.type = "button";
+    editButton.textContent = "✎";
+    editButton.setAttribute("aria-label", `Edit task: ${task.text}`);
+
+    editButton.addEventListener("click", () => {
+        startEditingTask(task, taskLabel);
+    });
+
     const deleteButton = document.createElement("button");
     deleteButton.className = "delete-task";
     deleteButton.type = "button";
@@ -289,6 +359,7 @@ function createTaskElement(task) {
     li.appendChild(taskLabel);
     li.appendChild(priorityBadge);
     li.appendChild(dueDateLabel);
+    li.appendChild(editButton);
     li.appendChild(deleteButton);
 
     return li;
