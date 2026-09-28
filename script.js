@@ -8,10 +8,12 @@ const taskCount = document.querySelector("#task-count");
 const companionMessage = document.querySelector("#companion-message");
 const filterButtons = document.querySelectorAll(".filter-button");
 const clearCompletedButton = document.querySelector("#clear-completed");
+const saveStatus = document.querySelector("#save-status");
 
 const storageKey = "momentum-tasks";
 let tasks = [];
 let currentFilter = "all";
+let saveStatusTimeout;
 
 const addTaskMessages = [
     "Another task? Fine. Put it on the list.",
@@ -80,6 +82,7 @@ renderTasks();
 
 function saveTasks() {
     localStorage.setItem(storageKey, JSON.stringify(tasks));
+    showSaveStatus();
 }
 
 function loadTasks() {
@@ -103,6 +106,16 @@ function showCompanionMessage(messages) {
     const randomIndex = Math.floor(Math.random() * messages.length);
 
     companionMessage.textContent = messages[randomIndex];
+}
+function showSaveStatus() {
+    clearTimeout(saveStatusTimeout);
+
+    saveStatus.textContent = "Saved locally";
+    saveStatus.classList.add("is-visible");
+
+    saveStatusTimeout = setTimeout(() => {
+        saveStatus.classList.remove("is-visible");
+    }, 2200);
 }
 
 function updateTaskCount() {
