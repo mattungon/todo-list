@@ -6,8 +6,9 @@ const taskList = document.querySelector("#task-list");
 const emptyState = document.querySelector("#empty-state");
 const taskCount = document.querySelector("#task-count");
 const companionMessage = document.querySelector("#companion-message");
+const filterButtons = document.querySelectorAll(".filter-button");
 
-taskForm.addEventListener("submit", handleTaskSubmit);
+let currentFilter = "all";
 
 const addTaskMessages = [
     "Another task? Fine. Put it on the list.",
@@ -29,11 +30,35 @@ const emptyTaskMessages = [
     "No tasks remain. Veyra is almost impressed.",
 ];
 
+const completeTaskMessages = [
+    "Completed. Veyra reluctantly approves.",
+    "One task down. Keep the streak alive.",
+    "Done. See? You are capable of progress.",
+];
+
+const incompleteTaskMessages = [
+    "Back on the list. No judgment. Much.",
+    "Unfinished again? Veyra has questions.",
+    "Restored. Finish it when you are ready.",
+];
+
+taskForm.addEventListener("submit", handleTaskSubmit);
+
+filterButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+        currentFilter = button.dataset.filter;
+
+        setActiveFilter(button);
+        updateTaskVisibility();
+    });
+});
+
 function showCompanionMessage(messages) {
     const randomIndex = Math.floor(Math.random() * messages.length);
 
     companionMessage.textContent = messages[randomIndex];
 }
+
 function updateTaskCount() {
     const totalTasks = taskList.childElementCount;
     const completedTasks = taskList.querySelectorAll(".task-completed").length;
@@ -95,6 +120,30 @@ function getDueDateDetails(dateValue) {
     };
 }
 
+function updateTaskVisibility() {
+    const taskItems = taskList.querySelectorAll(".task-item");
+
+    taskItems.forEach((taskItem) => {
+        const isCompleted = taskItem.classList.contains("task-completed");
+
+        const shouldShow =
+            currentFilter === "all" ||
+            (currentFilter === "active" && !isCompleted) ||
+            (currentFilter === "completed" && isCompleted);
+
+        taskItem.hidden = !shouldShow;
+    });
+}
+
+function setActiveFilter(selectedButton) {
+    filterButtons.forEach((button) => {
+        const isSelected = button === selectedButton;
+
+        button.classList.toggle("is-active", isSelected);
+        button.setAttribute("aria-pressed", String(isSelected));
+    });
+}
+
 function handleTaskSubmit(event) {
     event.preventDefault();
 
@@ -111,18 +160,6 @@ function handleTaskSubmit(event) {
     const li = document.createElement("li");
     li.className = "task-item";
 
-    const taskIcon = document.createElement("span");
-    taskIcon.className = "task-icon";
-    taskIcon.textContent = "✦";
-    taskIcon.setAttribute("aria-hidden", "true");
-
-    const taskLabel = document.createElement("span");
-    taskLabel.className = "task-text";
-    taskLabel.textContent = taskText;
-
-    const priorityBadge = document.createElement("span");
-    priorityBadge.className = `priority-badge priority-${priority}`;
-    priorityBadge.textContent = priority;
     const completeButton = document.createElement("button");
     completeButton.className = "complete-task";
     completeButton.type = "button";
@@ -137,7 +174,8 @@ function handleTaskSubmit(event) {
         const isCompleted = li.classList.toggle("task-completed");
 
         updateTaskCount();
-        
+        updateTaskVisibility();
+
         completeButton.setAttribute("aria-pressed", String(isCompleted));
         completeButton.textContent = isCompleted ? "↺" : "✓";
 
@@ -146,11 +184,8 @@ function handleTaskSubmit(event) {
                 "aria-label",
                 `Mark task incomplete: ${taskText}`,
             );
-            showCompanionMessage([
-                "Completed. Veyra reluctantly approves.",
-                "One task down. Keep the streak alive.",
-                "Done. See? You are capable of progress.",
-            ]);
+
+            showCompanionMessage(completeTaskMessages);
             return;
         }
 
@@ -158,12 +193,22 @@ function handleTaskSubmit(event) {
             "aria-label",
             `Mark task complete: ${taskText}`,
         );
-        showCompanionMessage([
-            "Back on the list. No judgment. Much.",
-            "Unfinished again? Veyra has questions.",
-            "Restored. Finish it when you are ready.",
-        ]);
+
+        showCompanionMessage(incompleteTaskMessages);
     });
+
+    const taskIcon = document.createElement("span");
+    taskIcon.className = "task-icon";
+    taskIcon.textContent = "✦";
+    taskIcon.setAttribute("aria-hidden", "true");
+
+    const taskLabel = document.createElement("span");
+    taskLabel.className = "task-text";
+    taskLabel.textContent = taskText;
+
+    const priorityBadge = document.createElement("span");
+    priorityBadge.className = `priority-badge priority-${priority}`;
+    priorityBadge.textContent = priority;
 
     const dueDateDetails = getDueDateDetails(dueDate);
 
@@ -181,6 +226,7 @@ function handleTaskSubmit(event) {
         li.remove();
 
         updateTaskCount();
+        updateTaskVisibility();
 
         if (taskList.childElementCount === 0) {
             emptyState.hidden = false;
@@ -201,7 +247,9 @@ function handleTaskSubmit(event) {
     taskList.appendChild(li);
 
     updateTaskCount();
+    updateTaskVisibility();
     showCompanionMessage(addTaskMessages);
+
     emptyState.hidden = true;
 
     taskInput.value = "";

@@ -101,6 +101,34 @@
                             <p class="section-label">TASKS</p>
                             <h2>Your tasks</h2>
                         </div>
+                        <div class="task-filters" aria-label="Filter tasks">
+                            <button
+                                class="filter-button is-active"
+                                type="button"
+                                data-filter="all"
+                                aria-pressed="true"
+                            >
+                                All
+                            </button>
+
+                            <button
+                                class="filter-button"
+                                type="button"
+                                data-filter="active"
+                                aria-pressed="false"
+                            >
+                                Active
+                            </button>
+
+                            <button
+                                class="filter-button"
+                                type="button"
+                                data-filter="completed"
+                                aria-pressed="false"
+                            >
+                                Completed
+                            </button>
+                        </div>
                     </div>
                     <p id="task-count" class="task-count" aria-live="polite">
                         No tasks yet
