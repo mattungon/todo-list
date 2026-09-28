@@ -271,6 +271,66 @@ function startEditingTask(task, taskLabel) {
     editInput.select();
 }
 
+function startEditingPriority(task, priorityBadge) {
+    const prioritySelect = document.createElement("select");
+    prioritySelect.className = "priority-edit-select";
+    prioritySelect.setAttribute(
+        "aria-label",
+        `Change priority for ${task.text}`,
+    );
+
+    const priorityOptions = [
+        { value: "low", label: "Low" },
+        { value: "medium", label: "Medium" },
+        { value: "high", label: "High" },
+    ];
+
+    priorityOptions.forEach((priorityOption) => {
+        const option = document.createElement("option");
+        option.value = priorityOption.value;
+        option.textContent = priorityOption.label;
+
+        if (priorityOption.value === task.priority) {
+            option.selected = true;
+        }
+
+        prioritySelect.appendChild(option);
+    });
+
+    function finishPriorityEditing(shouldSave) {
+        if (shouldSave) {
+            task.priority = prioritySelect.value;
+            saveTasks();
+            showCompanionMessage([
+                "Priority adjusted. Veyra acknowledges the urgency.",
+                "Updated. Try respecting your own priorities now.",
+                "Priority changed. The task knows its place.",
+            ]);
+        }
+
+        renderTasks();
+    }
+
+    prioritySelect.addEventListener("change", () => {
+        finishPriorityEditing(true);
+    });
+
+    prioritySelect.addEventListener("blur", () => {
+        finishPriorityEditing(false);
+    });
+
+    prioritySelect.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+            prioritySelect.value = task.priority;
+            finishPriorityEditing(false);
+        }
+    });
+
+    priorityBadge.replaceWith(prioritySelect);
+
+    prioritySelect.focus();
+}
+
 function createTaskElement(task) {
     const li = document.createElement("li");
     li.className = "task-item";
@@ -314,9 +374,18 @@ function createTaskElement(task) {
     taskLabel.className = "task-text";
     taskLabel.textContent = task.text;
 
-    const priorityBadge = document.createElement("span");
+    const priorityBadge = document.createElement("button");
     priorityBadge.className = `priority-badge priority-${task.priority}`;
+    priorityBadge.type = "button";
     priorityBadge.textContent = task.priority;
+    priorityBadge.setAttribute(
+        "aria-label",
+        `Change priority for ${task.text}. Current priority: ${task.priority}`,
+    );
+
+    priorityBadge.addEventListener("click", () => {
+        startEditingPriority(task, priorityBadge);
+    });
 
     const dueDateDetails = getDueDateDetails(task.dueDate);
 

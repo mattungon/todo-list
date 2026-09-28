@@ -662,6 +662,24 @@ select:focus-visible {
     line-height: 1;
     text-transform: uppercase;
 }
+button.priority-badge {
+    border: 0;
+    cursor: pointer;
+    font-family: inherit;
+    transition:
+        filter 160ms ease,
+        transform 160ms ease;
+}
+
+button.priority-badge:hover {
+    filter: brightness(1.15);
+    transform: translateY(-1px);
+}
+
+button.priority-badge:focus-visible {
+    outline: 3px solid rgba(169, 150, 255, 0.55);
+    outline-offset: 2px;
+}
 
 .priority-low {
     color: #89e6c4;
@@ -676,6 +694,27 @@ select:focus-visible {
 .priority-high {
     color: #ff9eaa;
     background: rgba(255, 158, 170, 0.14);
+}
+
+.priority-edit-select {
+    flex: 0 0 auto;
+    min-height: 28px;
+    padding: 0 24px 0 8px;
+    border: 1px solid rgba(169, 150, 255, 0.58);
+    border-radius: 999px;
+    outline: none;
+    color: var(--text);
+    background: var(--surface);
+    font-family: inherit;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.priority-edit-select:focus {
+    border-color: var(--purple);
+    box-shadow: 0 0 0 4px rgba(169, 150, 255, 0.18);
 }
 
 .due-date {
@@ -952,6 +991,7 @@ select:focus-visible {
     .edit-task,
     .save-edit,
     .cancel-edit,
+    button.priority-badge,
     .filter-button,
     .clear-completed,
     .save-status {
