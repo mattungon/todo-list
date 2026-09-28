@@ -11,6 +11,8 @@ const clearCompletedButton = document.querySelector("#clear-completed");
 const saveStatus = document.querySelector("#save-status");
 const sortSelect = document.querySelector("#sort-select");
 const taskSearchInput = document.querySelector("#task-search-input");
+const clearDialog = document.querySelector("#clear-dialog");
+const clearDialogMessage = document.querySelector("#clear-dialog-message");
 
 const storageKey = "momentum-tasks";
 const sortStorageKey = "momentum-sort";
@@ -69,6 +71,20 @@ filterButtons.forEach((button) => {
 });
 
 clearCompletedButton.addEventListener("click", () => {
+    const completedTaskCount = tasks.filter((task) => task.completed).length;
+
+    const taskWord = completedTaskCount === 1 ? "task" : "tasks";
+
+    clearDialogMessage.textContent = `This will permanently remove ${completedTaskCount} completed ${taskWord} from Momentum.`;
+
+    clearDialog.showModal();
+});
+
+clearDialog.addEventListener("close", () => {
+    if (clearDialog.returnValue !== "confirm") {
+        return;
+    }
+
     tasks = tasks.filter((task) => !task.completed);
 
     saveTasks();
@@ -81,6 +97,7 @@ clearCompletedButton.addEventListener("click", () => {
 
     showCompanionMessage(clearCompletedMessages);
 });
+
 sortSelect.addEventListener("change", () => {
     currentSort = sortSelect.value;
     localStorage.setItem(sortStorageKey, currentSort);

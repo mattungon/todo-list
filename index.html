@@ -187,6 +187,35 @@
                 </section>
             </section>
         </main>
+        <dialog
+            id="clear-dialog"
+            class="clear-dialog"
+            aria-labelledby="clear-dialog-title"
+        >
+            <form method="dialog" class="clear-dialog-content">
+                <p class="clear-dialog-kicker">TASK CLEANUP</p>
+
+                <h2 id="clear-dialog-title">Clear completed tasks?</h2>
+
+                <p id="clear-dialog-message">
+                    This will permanently remove completed tasks from Momentum.
+                </p>
+
+                <div class="clear-dialog-actions">
+                    <button class="dialog-cancel" type="submit" value="cancel">
+                        Cancel
+                    </button>
+
+                    <button
+                        class="dialog-confirm"
+                        type="submit"
+                        value="confirm"
+                    >
+                        Clear tasks
+                    </button>
+                </div>
+            </form>
+        </dialog>
 
         <script src="script.js"></script>
     </body>

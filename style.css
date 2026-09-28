@@ -500,6 +500,88 @@ select:focus-visible {
         border-color 160ms ease,
         transform 160ms ease;
 }
+.clear-dialog {
+    width: min(100% - 32px, 390px);
+    padding: 0;
+    border: 1px solid rgba(169, 150, 255, 0.34);
+    border-radius: 20px;
+    color: var(--text);
+    background: linear-gradient(
+        145deg,
+        rgba(48, 38, 69, 0.99),
+        rgba(35, 29, 52, 0.99)
+    );
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+}
+
+.clear-dialog::backdrop {
+    background: rgba(10, 7, 17, 0.72);
+    backdrop-filter: blur(3px);
+}
+
+.clear-dialog-content {
+    padding: 24px;
+}
+
+.clear-dialog-kicker {
+    margin: 0;
+    color: var(--pink);
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+}
+
+.clear-dialog h2 {
+    margin: 7px 0 9px;
+    font-family: "Outfit", Arial, sans-serif;
+    font-size: 1.35rem;
+    letter-spacing: -0.03em;
+}
+
+.clear-dialog-content > p:not(.clear-dialog-kicker) {
+    margin: 0;
+    color: var(--muted-text);
+    font-size: 0.9rem;
+    line-height: 1.55;
+}
+
+.clear-dialog-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 22px;
+}
+
+.dialog-cancel,
+.dialog-confirm {
+    min-height: 38px;
+    padding: 0 13px;
+    border-radius: 10px;
+    font-size: 0.78rem;
+    font-weight: 800;
+}
+
+.dialog-cancel {
+    border: 1px solid rgba(194, 184, 208, 0.3);
+    color: var(--muted-text);
+    background: transparent;
+}
+
+.dialog-cancel:hover {
+    border-color: rgba(194, 184, 208, 0.55);
+    color: var(--text);
+    background: rgba(194, 184, 208, 0.08);
+}
+
+.dialog-confirm {
+    border: 1px solid rgba(255, 148, 197, 0.5);
+    color: #351525;
+    background: var(--pink);
+}
+
+.dialog-confirm:hover {
+    filter: brightness(1.08);
+}
 
 .sort-label {
     display: inline-flex;
@@ -1124,6 +1206,10 @@ button.due-date:focus-visible {
     .clear-completed,
     .save-status,
     .task-search input {
+        transition: none;
+    }
+    .dialog-cancel,
+    .dialog-confirm {
         transition: none;
     }
 }
