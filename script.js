@@ -7,6 +7,7 @@ const emptyState = document.querySelector("#empty-state");
 const taskCount = document.querySelector("#task-count");
 const companionMessage = document.querySelector("#companion-message");
 const filterButtons = document.querySelectorAll(".filter-button");
+const clearCompletedButton = document.querySelector("#clear-completed");
 
 let currentFilter = "all";
 
@@ -41,6 +42,11 @@ const incompleteTaskMessages = [
     "Unfinished again? Veyra has questions.",
     "Restored. Finish it when you are ready.",
 ];
+const clearCompletedMessages = [
+    "Clean slate. Your completed tasks have been archived to nowhere.",
+    "Cleared. Veyra approves of removing evidence.",
+    "Finished tasks removed. The list looks less intimidating now.",
+];
 
 taskForm.addEventListener("submit", handleTaskSubmit);
 
@@ -53,6 +59,25 @@ filterButtons.forEach((button) => {
     });
 });
 
+clearCompletedButton.addEventListener("click", () => {
+    const completedTasks = taskList.querySelectorAll(".task-completed");
+
+    completedTasks.forEach((task) => {
+        task.remove();
+    });
+
+    updateTaskCount();
+    updateTaskVisibility();
+
+    if (taskList.childElementCount === 0) {
+        emptyState.hidden = false;
+        showCompanionMessage(emptyTaskMessages);
+        return;
+    }
+
+    showCompanionMessage(clearCompletedMessages);
+});
+
 function showCompanionMessage(messages) {
     const randomIndex = Math.floor(Math.random() * messages.length);
 
@@ -62,6 +87,8 @@ function showCompanionMessage(messages) {
 function updateTaskCount() {
     const totalTasks = taskList.childElementCount;
     const completedTasks = taskList.querySelectorAll(".task-completed").length;
+
+    clearCompletedButton.disabled = completedTasks === 0;
 
     if (totalTasks === 0) {
         taskCount.textContent = "No tasks yet";
