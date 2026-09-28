@@ -13,6 +13,9 @@ const sortSelect = document.querySelector("#sort-select");
 const taskSearchInput = document.querySelector("#task-search-input");
 const clearDialog = document.querySelector("#clear-dialog");
 const clearDialogMessage = document.querySelector("#clear-dialog-message");
+const undoToast = document.querySelector("#undo-toast");
+const undoMessage = document.querySelector("#undo-message");
+const undoButton = document.querySelector("#undo-button");
 
 const storageKey = "momentum-tasks";
 const sortStorageKey = "momentum-sort";
@@ -21,6 +24,9 @@ let currentFilter = "all";
 let currentSort = "newest";
 let currentSearch = "";
 let saveStatusTimeout;
+let deletedTask = null;
+let deletedTaskIndex = null;
+let undoTimeout;
 
 const addTaskMessages = [
     "Another task? Fine. Put it on the list.",
@@ -97,6 +103,35 @@ clearDialog.addEventListener("close", () => {
 
     showCompanionMessage(clearCompletedMessages);
 });
+undoButton.addEventListener("click", () => {
+    if (!deletedTask) {
+        return;
+    }
+
+    tasks.splice(deletedTaskIndex, 0, deletedTask);
+
+    currentFilter = "all";
+    currentSearch = "";
+
+    taskSearchInput.value = "";
+
+    const allFilterButton = document.querySelector(
+        '.filter-button[data-filter="all"]',
+    );
+
+    setActiveFilter(allFilterButton);
+
+    saveTasks();
+    renderTasks();
+
+    showCompanionMessage([
+        "Restored. Veyra will pretend that never happened.",
+        "The task returns. So does responsibility.",
+        "Undo accepted. A rare second chance.",
+    ]);
+
+    hideUndoToast();
+});
 
 sortSelect.addEventListener("change", () => {
     currentSort = sortSelect.value;
@@ -159,6 +194,27 @@ renderTasks();
 function saveTasks() {
     localStorage.setItem(storageKey, JSON.stringify(tasks));
     showSaveStatus();
+}
+function showUndoToast(task, taskIndex) {
+    clearTimeout(undoTimeout);
+
+    deletedTask = task;
+    deletedTaskIndex = taskIndex;
+
+    undoMessage.textContent = `“${task.text}” deleted.`;
+    undoToast.hidden = false;
+
+    undoTimeout = setTimeout(() => {
+        hideUndoToast();
+    }, 5000);
+}
+
+function hideUndoToast() {
+    clearTimeout(undoTimeout);
+
+    deletedTask = null;
+    deletedTaskIndex = null;
+    undoToast.hidden = true;
 }
 
 function loadTasks() {
@@ -566,10 +622,15 @@ function createTaskElement(task) {
     deleteButton.setAttribute("aria-label", `Delete task: ${task.text}`);
 
     deleteButton.addEventListener("click", () => {
-        tasks = tasks.filter((currentTask) => currentTask.id !== task.id);
+        const taskIndex = tasks.findIndex(
+            (currentTask) => currentTask.id === task.id,
+        );
+
+        tasks.splice(taskIndex, 1);
 
         saveTasks();
         renderTasks();
+        showUndoToast(task, taskIndex);
 
         if (tasks.length === 0) {
             showCompanionMessage(emptyTaskMessages);
@@ -578,7 +639,6 @@ function createTaskElement(task) {
 
         showCompanionMessage(deleteTaskMessages);
     });
-
     li.appendChild(completeButton);
     li.appendChild(taskIcon);
     li.appendChild(taskLabel);
