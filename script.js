@@ -10,12 +10,14 @@ const filterButtons = document.querySelectorAll(".filter-button");
 const clearCompletedButton = document.querySelector("#clear-completed");
 const saveStatus = document.querySelector("#save-status");
 const sortSelect = document.querySelector("#sort-select");
+const taskSearchInput = document.querySelector("#task-search-input");
 
 const storageKey = "momentum-tasks";
 const sortStorageKey = "momentum-sort";
 let tasks = [];
 let currentFilter = "all";
 let currentSort = "newest";
+let currentSearch = "";
 let saveStatusTimeout;
 
 const addTaskMessages = [
@@ -82,6 +84,10 @@ clearCompletedButton.addEventListener("click", () => {
 sortSelect.addEventListener("change", () => {
     currentSort = sortSelect.value;
     localStorage.setItem(sortStorageKey, currentSort);
+    renderTasks();
+});
+taskSearchInput.addEventListener("input", () => {
+    currentSearch = taskSearchInput.value.trim().toLowerCase();
     renderTasks();
 });
 
@@ -243,11 +249,17 @@ function getDueDateDetails(dateValue) {
 }
 
 function shouldShowTask(task) {
-    return (
+    const matchesFilter =
         currentFilter === "all" ||
         (currentFilter === "active" && !task.completed) ||
-        (currentFilter === "completed" && task.completed)
-    );
+        (currentFilter === "completed" && task.completed);
+
+    const searchText = currentSearch.trim().toLowerCase();
+    const taskText = task.text.toLowerCase();
+
+    const matchesSearch = taskText.includes(searchText);
+
+    return matchesFilter && matchesSearch;
 }
 
 function setActiveFilter(selectedButton) {
@@ -262,11 +274,11 @@ function setActiveFilter(selectedButton) {
 function renderTasks() {
     taskList.innerHTML = "";
 
-   getSortedTasks().forEach((task) => {
-       if (shouldShowTask(task)) {
-           taskList.appendChild(createTaskElement(task));
-       }
-   });
+    getSortedTasks().forEach((task) => {
+        if (shouldShowTask(task)) {
+            taskList.appendChild(createTaskElement(task));
+        }
+    });
 
     updateTaskCount();
     emptyState.hidden = tasks.length !== 0;

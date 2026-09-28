@@ -148,7 +148,18 @@
                             <option value="active-first">Active first</option>
                         </select>
                     </label>
-                    
+
+                    <label class="task-search" for="task-search-input">
+                        <span class="sr-only">Search tasks</span>
+
+                        <input
+                            id="task-search-input"
+                            type="search"
+                            placeholder="Search tasks..."
+                            autocomplete="off"
+                        />
+                    </label>
+
                     <p id="task-count" class="task-count" aria-live="polite">
                         No tasks yet
                     </p>

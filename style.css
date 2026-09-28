@@ -510,6 +510,38 @@ select:focus-visible {
     font-size: 0.76rem;
     font-weight: 700;
 }
+.task-search {
+    display: block;
+    margin-top: 12px;
+}
+
+.task-search input {
+    width: 100%;
+    min-height: 40px;
+    padding: 0 14px;
+    border: 1px solid rgba(169, 150, 255, 0.3);
+    border-radius: 12px;
+    outline: none;
+    color: var(--text);
+    background: rgba(39, 32, 57, 0.72);
+    font-family: inherit;
+    font-size: 0.84rem;
+    transition:
+        border-color 160ms ease,
+        box-shadow 160ms ease,
+        background 160ms ease;
+}
+
+.task-search input::placeholder {
+    color: var(--subtle-text);
+}
+
+.task-search input:hover,
+.task-search input:focus {
+    border-color: rgba(169, 150, 255, 0.72);
+    background: rgba(39, 32, 57, 0.94);
+    box-shadow: 0 0 0 4px rgba(169, 150, 255, 0.14);
+}
 
 .sort-label select {
     min-height: 32px;
@@ -1086,13 +1118,12 @@ button.due-date:focus-visible {
     .save-edit,
     .cancel-edit,
     button.priority-badge,
+    button.due-date,
+    .clear-date,
     .filter-button,
     .clear-completed,
-    .save-status {
-        transition: none;
-    }
-    button.due-date,
-    .clear-date {
+    .save-status,
+    .task-search input {
         transition: none;
     }
 }
