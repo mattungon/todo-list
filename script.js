@@ -387,12 +387,19 @@ function getSortedTasks() {
     }
 
     return [...tasks].sort((firstTask, secondTask) => {
+        const completionDifference =
+            Number(firstTask.completed) - Number(secondTask.completed);
+
+        if (completionDifference !== 0) {
+            return completionDifference;
+        }
         if (currentSort === "due-date") {
             const firstDate = firstTask.dueDate || "9999-12-31";
             const secondDate = secondTask.dueDate || "9999-12-31";
 
             return firstDate.localeCompare(secondDate);
         }
+
 
         if (currentSort === "priority") {
             const priorityDifference =
@@ -1044,8 +1051,24 @@ function createTaskElement(task) {
     completeButton.setAttribute("aria-pressed", String(task.completed));
 
     completeButton.addEventListener("click", () => {
+        const taskIndex = tasks.findIndex(
+            (currentTask) => currentTask.id === task.id,
+        );
+
+        if (taskIndex === -1) {
+            return;
+        }
+
         task.completed = !task.completed;
         task.completedAt = task.completed ? new Date().toISOString() : null;
+
+        tasks.splice(taskIndex, 1);
+
+        if (task.completed) {
+            tasks.push(task);
+        } else {
+            tasks.unshift(task);
+        }
 
         saveTasks();
         renderTasks();
