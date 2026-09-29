@@ -255,6 +255,37 @@ taskSearchInput.addEventListener("input", () => {
     renderTasks();
 });
 
+window.addEventListener("storage", (event) => {
+    if (event.key === storageKey) {
+        const isEditing =
+            document.querySelector(".task-edit-input") ||
+            document.querySelector(".priority-edit-select") ||
+            document.querySelector(".due-date-input");
+
+        if (isEditing) {
+            showCompanionMessage([
+                "Another tab changed the list. Finish this edit before refreshing.",
+                "The other Momentum window made a change. Your edit is still active.",
+            ]);
+            return;
+        }
+
+        loadTasks();
+        renderTasks();
+
+        showCompanionMessage([
+            "Another Momentum window changed the list.",
+            "The list synchronized. Multitasking, apparently.",
+            "Tasks updated from another tab.",
+        ]);
+    }
+
+    if (event.key === sortStorageKey) {
+        loadSortPreference();
+        renderTasks();
+    }
+});
+
 loadTasks();
 loadSortPreference();
 renderTasks();
