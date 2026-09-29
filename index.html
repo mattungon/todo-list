@@ -169,6 +169,13 @@
                             autocomplete="off"
                         />
                     </label>
+                    <p class="shortcut-hint">
+                        Press <kbd>/</kbd> to search
+                        <span aria-hidden="true">·</span>
+                        <kbd>N</kbd> for a new task
+                        <span aria-hidden="true">·</span>
+                        <kbd>?</kbd> for shortcuts
+                    </p>
 
                     <p id="task-count" class="task-count" aria-live="polite">
                         No tasks yet
@@ -204,6 +211,49 @@
                 </section>
             </section>
         </main>
+        <dialog
+            id="shortcut-dialog"
+            class="shortcut-dialog"
+            aria-labelledby="shortcut-dialog-title"
+        >
+            <div class="shortcut-dialog-content">
+                <p class="clear-dialog-kicker">KEYBOARD CONTROL</p>
+
+                <h2 id="shortcut-dialog-title">Momentum shortcuts</h2>
+
+                <div class="shortcut-list">
+                    <div class="shortcut-row">
+                        <span>Focus task search</span>
+                        <kbd>/</kbd>
+                    </div>
+
+                    <div class="shortcut-row">
+                        <span>Focus new task</span>
+                        <kbd>N</kbd>
+                    </div>
+
+                    <div class="shortcut-row">
+                        <span>Show shortcuts</span>
+                        <kbd>?</kbd>
+                    </div>
+
+                    <div class="shortcut-row">
+                        <span>Close dialog or clear focus</span>
+                        <kbd>Esc</kbd>
+                    </div>
+                </div>
+
+                <div class="shortcut-dialog-actions">
+                    <button
+                        id="shortcut-dialog-close"
+                        class="dialog-confirm"
+                        type="button"
+                    >
+                        Got it
+                    </button>
+                </div>
+            </div>
+        </dialog>
         <dialog
             id="clear-dialog"
             class="clear-dialog"

@@ -775,6 +775,98 @@ select:focus-visible {
         opacity 220ms ease,
         transform 220ms ease;
 }
+.shortcut-hint {
+  margin: 10px 0 0;
+  color: var(--subtle-text);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  text-align: right;
+}
+
+.shortcut-hint kbd,
+.shortcut-row kbd {
+  display: inline-grid;
+  min-width: 24px;
+  min-height: 23px;
+  padding: 0 6px;
+  border: 1px solid rgba(169, 150, 255, 0.38);
+  border-bottom-width: 2px;
+  border-radius: 6px;
+  color: var(--purple);
+  background: rgba(169, 150, 255, 0.1);
+  font-family: "DM Sans", Arial, sans-serif;
+  font-size: 0.7rem;
+  font-weight: 800;
+  line-height: 1;
+  place-items: center;
+}
+
+.shortcut-dialog {
+  width: min(100% - 32px, 390px);
+  padding: 0;
+  border: 1px solid rgba(169, 150, 255, 0.34);
+  border-radius: 20px;
+  color: var(--text);
+  background: linear-gradient(
+    145deg,
+    rgba(48, 38, 69, 0.99),
+    rgba(35, 29, 52, 0.99)
+  );
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+}
+
+.shortcut-dialog::backdrop {
+  background: rgba(10, 7, 17, 0.72);
+  backdrop-filter: blur(3px);
+}
+
+.shortcut-dialog-content {
+  padding: 24px;
+}
+
+.shortcut-dialog-content h2 {
+  margin: 7px 0 16px;
+  font-family: "Outfit", Arial, sans-serif;
+  font-size: 1.35rem;
+  letter-spacing: -0.03em;
+}
+
+.shortcut-list {
+  display: grid;
+  gap: 8px;
+}
+
+.shortcut-row {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 38px;
+  padding: 0 10px;
+  border: 1px solid rgba(169, 150, 255, 0.14);
+  border-radius: 10px;
+  color: var(--muted-text);
+  font-size: 0.82rem;
+}
+
+.shortcut-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+@media (max-width: 600px) {
+  .shortcut-hint {
+    text-align: left;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shortcut-dialog,
+  .shortcut-hint {
+    transition: none;
+  }
+}
 
 .save-status.is-visible {
     opacity: 1;

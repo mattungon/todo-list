@@ -19,6 +19,8 @@ const undoButton = document.querySelector("#undo-button");
 const dailySummary = document.querySelector("#daily-summary");
 const startFreshButton = document.querySelector("#start-fresh");
 const todoApp = document.querySelector(".todo-app");
+const shortcutDialog = document.querySelector("#shortcut-dialog");
+const shortcutDialogClose = document.querySelector("#shortcut-dialog-close");
 
 const storageKey = "momentum-tasks";
 const sortStorageKey = "momentum-sort";
@@ -89,6 +91,67 @@ const taskOrderMessages = [
     "Reordered. Veyra approves of the improved formation.",
     "Task position updated. Proceed accordingly.",
 ];
+shortcutDialogClose.addEventListener("click", () => {
+    shortcutDialog.close();
+    taskInput.focus();
+});
+
+shortcutDialog.addEventListener("click", (event) => {
+    if (event.target === shortcutDialog) {
+        shortcutDialog.close();
+    }
+});
+
+window.addEventListener("keydown", (event) => {
+    const activeElement = document.activeElement;
+    const isTyping =
+        activeElement instanceof HTMLInputElement ||
+        activeElement instanceof HTMLTextAreaElement ||
+        activeElement instanceof HTMLSelectElement ||
+        activeElement?.isContentEditable;
+
+    if (event.key === "Escape") {
+        if (shortcutDialog.open) {
+            shortcutDialog.close();
+            return;
+        }
+
+        if (document.activeElement === taskSearchInput) {
+            taskSearchInput.value = "";
+            currentSearch = "";
+            renderTasks();
+            taskInput.focus();
+            return;
+        }
+
+        return;
+    }
+
+    if (isTyping) {
+        return;
+    }
+
+    if (event.key === "/") {
+        event.preventDefault();
+        taskSearchInput.focus();
+        taskSearchInput.select();
+        return;
+    }
+
+    if (event.key.toLowerCase() === "n") {
+        event.preventDefault();
+        taskInput.focus();
+        return;
+    }
+
+    if (event.key === "?") {
+        event.preventDefault();
+
+        if (!shortcutDialog.open) {
+            shortcutDialog.showModal();
+        }
+    }
+});
 
 taskForm.addEventListener("submit", handleTaskSubmit);
 
