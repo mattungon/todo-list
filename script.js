@@ -35,6 +35,7 @@ let deletedTaskIndex = null;
 let undoTimeout;
 let cleanupAction = "clear";
 let draggedTaskId = null;
+let storageAvailable = true;
 
 const addTaskMessages = [
     "Another task? Fine. Put it on the list.",
@@ -91,6 +92,13 @@ const taskOrderMessages = [
     "Reordered. Veyra approves of the improved formation.",
     "Task position updated. Proceed accordingly.",
 ];
+const storageMessages = {
+    saved: "Saved locally.",
+    failed: "Veyra could not save this change. Check your browser storage settings.",
+    unavailable:
+        "Local saving is unavailable. Your changes may disappear after refresh.",
+};
+
 shortcutDialogClose.addEventListener("click", () => {
     shortcutDialog.close();
     taskInput.focus();
@@ -246,7 +254,17 @@ undoButton.addEventListener("click", () => {
 
 sortSelect.addEventListener("change", () => {
     currentSort = sortSelect.value;
-    localStorage.setItem(sortStorageKey, currentSort);
+
+    try {
+        localStorage.setItem(sortStorageKey, currentSort);
+    } catch (error) {
+        storageAvailable = false;
+
+        console.error("Momentum could not save sort preference:", error);
+
+        showSaveStatus(storageMessages.failed);
+    }
+
     renderTasks();
 });
 
@@ -257,19 +275,6 @@ taskSearchInput.addEventListener("input", () => {
 
 window.addEventListener("storage", (event) => {
     if (event.key === storageKey) {
-        const isEditing =
-            document.querySelector(".task-edit-input") ||
-            document.querySelector(".priority-edit-select") ||
-            document.querySelector(".due-date-input");
-
-        if (isEditing) {
-            showCompanionMessage([
-                "Another tab changed the list. Finish this edit before refreshing.",
-                "The other Momentum window made a change. Your edit is still active.",
-            ]);
-            return;
-        }
-
         loadTasks();
         renderTasks();
 
@@ -340,12 +345,44 @@ function getSortedTasks() {
 }
 
 function saveTasks() {
-    localStorage.setItem(storageKey, JSON.stringify(tasks));
-    showSaveStatus();
+    const serializedTasks = JSON.stringify(tasks);
+
+    try {
+        localStorage.setItem(storageKey, serializedTasks);
+        storageAvailable = true;
+        showSaveStatus(storageMessages.saved);
+        return true;
+    } catch (error) {
+        storageAvailable = false;
+
+        console.error("Momentum could not save tasks:", error);
+
+        showSaveStatus(storageMessages.failed);
+        showCompanionMessage([
+            storageMessages.failed,
+            "The change exists for now, but local saving failed.",
+            "Storage refused the update. Veyra is displeased.",
+        ]);
+
+        return false;
+    }
 }
 
 function loadTasks() {
-    const savedTasks = localStorage.getItem(storageKey);
+    let savedTasks;
+
+    try {
+        savedTasks = localStorage.getItem(storageKey);
+        storageAvailable = true;
+    } catch (error) {
+        storageAvailable = false;
+        tasks = [];
+
+        console.error("Momentum could not read tasks:", error);
+
+        showSaveStatus(storageMessages.unavailable);
+        return;
+    }
 
     if (!savedTasks) {
         tasks = [];
@@ -354,16 +391,43 @@ function loadTasks() {
 
     try {
         const parsedTasks = JSON.parse(savedTasks);
+
         tasks = Array.isArray(parsedTasks) ? parsedTasks : [];
-    } catch {
+    } catch (error) {
         tasks = [];
+
+        console.error("Momentum found invalid saved task data:", error);
+
+        showCompanionMessage([
+            "The saved task data was unreadable, so the list was reset.",
+            "Veyra found corrupted task data and cleared the damage.",
+        ]);
     }
 }
 
 function loadSortPreference() {
-    const savedSort = localStorage.getItem(sortStorageKey);
+    let savedSort;
 
-    if (savedSort) {
+    try {
+        savedSort = localStorage.getItem(sortStorageKey);
+    } catch (error) {
+        storageAvailable = false;
+
+        console.error("Momentum could not read sort preference:", error);
+
+        showSaveStatus(storageMessages.unavailable);
+        return;
+    }
+
+    const validSortValues = [
+        "newest",
+        "due-date",
+        "priority",
+        "active-first",
+        "manual",
+    ];
+
+    if (validSortValues.includes(savedSort)) {
         currentSort = savedSort;
         sortSelect.value = savedSort;
     }
@@ -374,15 +438,15 @@ function showCompanionMessage(messages) {
     companionMessage.textContent = messages[randomIndex];
 }
 
-function showSaveStatus() {
+function showSaveStatus(message = storageMessages.saved) {
     clearTimeout(saveStatusTimeout);
 
-    saveStatus.textContent = "Saved locally";
+    saveStatus.textContent = message;
     saveStatus.classList.add("is-visible");
 
     saveStatusTimeout = setTimeout(() => {
         saveStatus.classList.remove("is-visible");
-    }, 2200);
+    }, 2600);
 }
 
 function showUndoToast(task, taskIndex) {
