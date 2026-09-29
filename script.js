@@ -16,6 +16,9 @@ const clearDialogMessage = document.querySelector("#clear-dialog-message");
 const undoToast = document.querySelector("#undo-toast");
 const undoMessage = document.querySelector("#undo-message");
 const undoButton = document.querySelector("#undo-button");
+const dailySummary = document.querySelector("#daily-summary");
+const startFreshButton = document.querySelector("#start-fresh");
+const todoApp = document.querySelector(".todo-app");
 
 const storageKey = "momentum-tasks";
 const sortStorageKey = "momentum-sort";
@@ -27,6 +30,7 @@ let saveStatusTimeout;
 let deletedTask = null;
 let deletedTaskIndex = null;
 let undoTimeout;
+let cleanupAction = "clear";
 
 const addTaskMessages = [
     "Another task? Fine. Put it on the list.",
@@ -65,6 +69,16 @@ const clearCompletedMessages = [
     "Cleared. Veyra approves of removing evidence.",
     "Finished tasks removed. The list looks less intimidating now.",
 ];
+const allCompleteMessages = [
+    "Every task is complete. Veyra is genuinely impressed.",
+    "The list is conquered. Enjoy your victory.",
+    "All done. Momentum achieved.",
+];
+const startFreshMessages = [
+    "A fresh start. Keep the active tasks moving.",
+    "Yesterday is cleared away. Today gets your focus.",
+    "New page, same capable task mage.",
+];
 
 taskForm.addEventListener("submit", handleTaskSubmit);
 
@@ -78,10 +92,32 @@ filterButtons.forEach((button) => {
 
 clearCompletedButton.addEventListener("click", () => {
     const completedTaskCount = tasks.filter((task) => task.completed).length;
-
     const taskWord = completedTaskCount === 1 ? "task" : "tasks";
 
+    cleanupAction = "clear";
+
+    clearDialog.querySelector("#clear-dialog-title").textContent =
+        "Clear completed tasks?";
+
     clearDialogMessage.textContent = `This will permanently remove ${completedTaskCount} completed ${taskWord} from Momentum.`;
+
+    clearDialog.querySelector(".dialog-confirm").textContent = "Clear tasks";
+
+    clearDialog.showModal();
+});
+
+startFreshButton.addEventListener("click", () => {
+    const completedTaskCount = tasks.filter((task) => task.completed).length;
+    const taskWord = completedTaskCount === 1 ? "task" : "tasks";
+
+    cleanupAction = "fresh";
+
+    clearDialog.querySelector("#clear-dialog-title").textContent =
+        "Start fresh?";
+
+    clearDialogMessage.textContent = `This will remove ${completedTaskCount} completed ${taskWord}. Your active tasks will stay on the list.`;
+
+    clearDialog.querySelector(".dialog-confirm").textContent = "Start fresh";
 
     clearDialog.showModal();
 });
@@ -101,8 +137,11 @@ clearDialog.addEventListener("close", () => {
         return;
     }
 
-    showCompanionMessage(clearCompletedMessages);
+    showCompanionMessage(
+        cleanupAction === "fresh" ? startFreshMessages : clearCompletedMessages,
+    );
 });
+
 undoButton.addEventListener("click", () => {
     if (!deletedTask) {
         return;
@@ -257,21 +296,70 @@ function showSaveStatus() {
         saveStatus.classList.remove("is-visible");
     }, 2200);
 }
-
 function updateTaskCount() {
     const totalTasks = tasks.length;
     const completedTasks = tasks.filter((task) => task.completed).length;
 
     clearCompletedButton.disabled = completedTasks === 0;
+    startFreshButton.disabled = completedTasks === 0;
 
     if (totalTasks === 0) {
         taskCount.textContent = "No tasks yet";
+        updateDailySummary();
         return;
     }
 
     const taskWord = totalTasks === 1 ? "task" : "tasks";
 
     taskCount.textContent = `${completedTasks} of ${totalTasks} ${taskWord} complete`;
+
+    updateDailySummary();
+}
+
+function getLocalDateKey(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+}
+
+function updateDailySummary() {
+    const todayKey = getLocalDateKey(new Date());
+
+    const completedToday = tasks.filter((task) => {
+        if (!task.completedAt) {
+            return false;
+        }
+
+        return getLocalDateKey(new Date(task.completedAt)) === todayKey;
+    }).length;
+
+    if (completedToday === 0) {
+        dailySummary.textContent = "No tasks completed today";
+        return;
+    }
+
+    const taskWord = completedToday === 1 ? "task" : "tasks";
+
+    dailySummary.textContent = `${completedToday} ${taskWord} completed today`;
+}
+
+function celebrateAllTasksComplete() {
+    const hasTasks = tasks.length > 0;
+    const allTasksCompleted = tasks.every((task) => task.completed);
+
+    if (!hasTasks || !allTasksCompleted) {
+        return;
+    }
+
+    todoApp.classList.remove("all-complete");
+
+    requestAnimationFrame(() => {
+        todoApp.classList.add("all-complete");
+    });
+
+    showCompanionMessage(allCompleteMessages);
 }
 
 function getDueDateDetails(dateValue) {
@@ -552,15 +640,23 @@ function createTaskElement(task) {
             ? `Mark task incomplete: ${task.text}`
             : `Mark task complete: ${task.text}`,
     );
-    completeButton.setAttribute("aria-pressed", String(task.completed));
-
     completeButton.addEventListener("click", () => {
         task.completed = !task.completed;
+        task.completedAt = task.completed ? new Date().toISOString() : null;
 
         saveTasks();
         renderTasks();
 
         if (task.completed) {
+            const allTasksCompleted = tasks.every(
+                (currentTask) => currentTask.completed,
+            );
+
+            if (allTasksCompleted) {
+                celebrateAllTasksComplete();
+                return;
+            }
+
             showCompanionMessage(completeTaskMessages);
             return;
         }

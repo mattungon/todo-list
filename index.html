@@ -136,6 +136,15 @@
                             >
                                 Clear completed
                             </button>
+
+                            <button
+                                id="start-fresh"
+                                class="start-fresh"
+                                type="button"
+                                disabled
+                            >
+                                Start fresh
+                            </button>
                         </div>
                     </div>
                     <label class="sort-label" for="sort-select">
@@ -162,6 +171,13 @@
 
                     <p id="task-count" class="task-count" aria-live="polite">
                         No tasks yet
+                    </p>
+                    <p
+                        id="daily-summary"
+                        class="daily-summary"
+                        aria-live="polite"
+                    >
+                        No tasks completed today
                     </p>
 
                     <p
@@ -216,6 +232,18 @@
                 </div>
             </form>
         </dialog>
+        <div
+            id="undo-toast"
+            class="undo-toast"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+            hidden
+        >
+            <p id="undo-message"></p>
+
+            <button id="undo-button" type="button">Undo</button>
+        </div>
 
         <script src="script.js"></script>
     </body>

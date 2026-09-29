@@ -500,6 +500,39 @@ select:focus-visible {
         border-color 160ms ease,
         transform 160ms ease;
 }
+
+.start-fresh {
+  min-height: 32px;
+  margin-top: 8px;
+  margin-left: 6px;
+  padding: 0 11px;
+  border: 1px solid rgba(137, 230, 196, 0.36);
+  border-radius: 999px;
+  color: #91ead4;
+  background: rgba(137, 230, 196, 0.08);
+  font-size: 0.74rem;
+  font-weight: 700;
+  transition:
+    color 160ms ease,
+    background 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.start-fresh:hover:not(:disabled) {
+  border-color: rgba(137, 230, 196, 0.72);
+  color: #e8fff8;
+  background: rgba(137, 230, 196, 0.18);
+  transform: translateY(-1px);
+}
+
+.start-fresh:disabled {
+  border-color: rgba(194, 184, 208, 0.14);
+  color: rgba(194, 184, 208, 0.44);
+  background: transparent;
+  cursor: not-allowed;
+}
+
 .clear-dialog {
     width: min(100% - 32px, 390px);
     padding: 0;
@@ -512,6 +545,62 @@ select:focus-visible {
         rgba(35, 29, 52, 0.99)
     );
     box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+}
+.undo-toast {
+  position: fixed;
+  z-index: 10;
+  right: 20px;
+  bottom: 20px;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  max-width: min(100% - 32px, 430px);
+  padding: 13px 14px 13px 16px;
+  border: 1px solid rgba(169, 150, 255, 0.42);
+  border-radius: 15px;
+  color: var(--text);
+  background: rgba(39, 32, 57, 0.97);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+}
+
+.undo-toast[hidden] {
+  display: none;
+}
+
+.undo-toast p {
+  overflow: hidden;
+  min-width: 0;
+  margin: 0;
+  color: var(--muted-text);
+  font-size: 0.84rem;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#undo-button {
+  flex: 0 0 auto;
+  min-height: 32px;
+  padding: 0 11px;
+  border: 1px solid rgba(169, 150, 255, 0.56);
+  border-radius: 9px;
+  color: #1d152b;
+  background: var(--purple);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+#undo-button:hover {
+  filter: brightness(1.1);
+}
+
+@media (max-width: 600px) {
+  .undo-toast {
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+    max-width: none;
+  }
 }
 
 .clear-dialog::backdrop {
@@ -664,6 +753,14 @@ select:focus-visible {
     font-size: 0.82rem;
     font-weight: 700;
     letter-spacing: 0.04em;
+}
+
+.daily-summary {
+  min-height: 18px;
+  margin: -4px 0 10px;
+  color: #91ead4;
+  font-size: 0.76rem;
+  font-weight: 700;
 }
 
 .save-status {
@@ -1186,30 +1283,53 @@ button.due-date:focus-visible {
         display: none;
     }
 }
+.todo-app.all-complete {
+  animation: completion-celebration 900ms ease-out;
+}
+
+@keyframes completion-celebration {
+  0% {
+    box-shadow: var(--shadow);
+  }
+
+  35% {
+    box-shadow:
+      0 0 0 5px rgba(137, 230, 196, 0.16),
+      0 0 42px rgba(137, 230, 196, 0.34),
+      var(--shadow);
+  }
+
+  100% {
+    box-shadow: var(--shadow);
+  }
+}
 
 @media (prefers-reduced-motion: reduce) {
     .veyra {
         animation: none;
     }
+    .todo-app.all-complete {
+  animation: none;
+}
 
     .task-item,
-    .add-button,
-    .delete-task,
-    .complete-task,
-    .edit-task,
-    .save-edit,
-    .cancel-edit,
-    button.priority-badge,
-    button.due-date,
-    .clear-date,
-    .filter-button,
-    .clear-completed,
-    .save-status,
-    .task-search input {
-        transition: none;
-    }
-    .dialog-cancel,
-    .dialog-confirm {
-        transition: none;
-    }
+  .add-button,
+  .delete-task,
+  .complete-task,
+  .edit-task,
+  .save-edit,
+  .cancel-edit,
+  button.priority-badge,
+  button.due-date,
+  .clear-date,
+  .filter-button,
+  .clear-completed,
+  .save-status,
+  .task-search input,
+  #undo-button,
+  .dialog-cancel,
+  .start-fresh,
+  .dialog-confirm {
+    transition: none;
+  }
 }
