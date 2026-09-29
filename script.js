@@ -22,6 +22,7 @@ const todoApp = document.querySelector(".todo-app");
 
 const storageKey = "momentum-tasks";
 const sortStorageKey = "momentum-sort";
+
 let tasks = [];
 let currentFilter = "all";
 let currentSort = "newest";
@@ -31,6 +32,7 @@ let deletedTask = null;
 let deletedTaskIndex = null;
 let undoTimeout;
 let cleanupAction = "clear";
+let draggedTaskId = null;
 
 const addTaskMessages = [
     "Another task? Fine. Put it on the list.",
@@ -69,15 +71,23 @@ const clearCompletedMessages = [
     "Cleared. Veyra approves of removing evidence.",
     "Finished tasks removed. The list looks less intimidating now.",
 ];
+
 const allCompleteMessages = [
     "Every task is complete. Veyra is genuinely impressed.",
     "The list is conquered. Enjoy your victory.",
     "All done. Momentum achieved.",
 ];
+
 const startFreshMessages = [
     "A fresh start. Keep the active tasks moving.",
     "Yesterday is cleared away. Today gets your focus.",
     "New page, same capable task mage.",
+];
+
+const taskOrderMessages = [
+    "Moved. The list now follows your command.",
+    "Reordered. Veyra approves of the improved formation.",
+    "Task position updated. Proceed accordingly.",
 ];
 
 taskForm.addEventListener("submit", handleTaskSubmit);
@@ -151,7 +161,6 @@ undoButton.addEventListener("click", () => {
 
     currentFilter = "all";
     currentSearch = "";
-
     taskSearchInput.value = "";
 
     const allFilterButton = document.querySelector(
@@ -177,6 +186,7 @@ sortSelect.addEventListener("change", () => {
     localStorage.setItem(sortStorageKey, currentSort);
     renderTasks();
 });
+
 taskSearchInput.addEventListener("input", () => {
     currentSearch = taskSearchInput.value.trim().toLowerCase();
     renderTasks();
@@ -184,12 +194,18 @@ taskSearchInput.addEventListener("input", () => {
 
 loadTasks();
 loadSortPreference();
+renderTasks();
+
 function getSortedTasks() {
     const priorityOrder = {
         high: 0,
         medium: 1,
         low: 2,
     };
+
+    if (currentSort === "manual") {
+        return [...tasks];
+    }
 
     return [...tasks].sort((firstTask, secondTask) => {
         if (currentSort === "due-date") {
@@ -228,12 +244,53 @@ function getSortedTasks() {
         return secondCreatedAt - firstCreatedAt;
     });
 }
-renderTasks();
 
 function saveTasks() {
     localStorage.setItem(storageKey, JSON.stringify(tasks));
     showSaveStatus();
 }
+
+function loadTasks() {
+    const savedTasks = localStorage.getItem(storageKey);
+
+    if (!savedTasks) {
+        tasks = [];
+        return;
+    }
+
+    try {
+        const parsedTasks = JSON.parse(savedTasks);
+        tasks = Array.isArray(parsedTasks) ? parsedTasks : [];
+    } catch {
+        tasks = [];
+    }
+}
+
+function loadSortPreference() {
+    const savedSort = localStorage.getItem(sortStorageKey);
+
+    if (savedSort) {
+        currentSort = savedSort;
+        sortSelect.value = savedSort;
+    }
+}
+
+function showCompanionMessage(messages) {
+    const randomIndex = Math.floor(Math.random() * messages.length);
+    companionMessage.textContent = messages[randomIndex];
+}
+
+function showSaveStatus() {
+    clearTimeout(saveStatusTimeout);
+
+    saveStatus.textContent = "Saved locally";
+    saveStatus.classList.add("is-visible");
+
+    saveStatusTimeout = setTimeout(() => {
+        saveStatus.classList.remove("is-visible");
+    }, 2200);
+}
+
 function showUndoToast(task, taskIndex) {
     clearTimeout(undoTimeout);
 
@@ -256,46 +313,53 @@ function hideUndoToast() {
     undoToast.hidden = true;
 }
 
-function loadTasks() {
-    const savedTasks = localStorage.getItem(storageKey);
+function moveTask(taskId, direction) {
+    const currentIndex = tasks.findIndex((task) => task.id === taskId);
 
-    if (!savedTasks) {
-        tasks = [];
+    if (currentIndex === -1) {
         return;
     }
 
-    try {
-        const parsedTasks = JSON.parse(savedTasks);
+    const targetIndex = currentIndex + direction;
 
-        tasks = Array.isArray(parsedTasks) ? parsedTasks : [];
-    } catch {
-        tasks = [];
+    if (targetIndex < 0 || targetIndex >= tasks.length) {
+        return;
     }
-}
-function loadSortPreference() {
-    const savedSort = localStorage.getItem(sortStorageKey);
 
-    if (savedSort) {
-        currentSort = savedSort;
-        sortSelect.value = savedSort;
+    const [movedTask] = tasks.splice(currentIndex, 1);
+
+    tasks.splice(targetIndex, 0, movedTask);
+
+    saveTasks();
+    renderTasks();
+    showCompanionMessage(taskOrderMessages);
+}
+
+function reorderTaskByDrag(draggedTaskId, targetTaskId) {
+    if (!draggedTaskId || draggedTaskId === targetTaskId) {
+        return;
     }
+
+    const draggedIndex = tasks.findIndex((task) => task.id === draggedTaskId);
+    const targetIndex = tasks.findIndex((task) => task.id === targetTaskId);
+
+    if (draggedIndex === -1 || targetIndex === -1) {
+        return;
+    }
+
+    const [draggedTask] = tasks.splice(draggedIndex, 1);
+
+    const updatedTargetIndex = tasks.findIndex(
+        (task) => task.id === targetTaskId,
+    );
+
+    tasks.splice(updatedTargetIndex, 0, draggedTask);
+
+    saveTasks();
+    renderTasks();
+    showCompanionMessage(taskOrderMessages);
 }
 
-function showCompanionMessage(messages) {
-    const randomIndex = Math.floor(Math.random() * messages.length);
-
-    companionMessage.textContent = messages[randomIndex];
-}
-function showSaveStatus() {
-    clearTimeout(saveStatusTimeout);
-
-    saveStatus.textContent = "Saved locally";
-    saveStatus.classList.add("is-visible");
-
-    saveStatusTimeout = setTimeout(() => {
-        saveStatus.classList.remove("is-visible");
-    }, 2200);
-}
 function updateTaskCount() {
     const totalTasks = tasks.length;
     const completedTasks = tasks.filter((task) => task.completed).length;
@@ -415,10 +479,8 @@ function shouldShowTask(task) {
         (currentFilter === "active" && !task.completed) ||
         (currentFilter === "completed" && task.completed);
 
-    const searchText = currentSearch.trim().toLowerCase();
     const taskText = task.text.toLowerCase();
-
-    const matchesSearch = taskText.includes(searchText);
+    const matchesSearch = taskText.includes(currentSearch);
 
     return matchesFilter && matchesSearch;
 }
@@ -506,9 +568,9 @@ function startEditingTask(task, taskLabel) {
 }
 
 function startEditingPriority(task, priorityBadge) {
-    const prioritySelect = document.createElement("select");
-    prioritySelect.className = "priority-edit-select";
-    prioritySelect.setAttribute(
+    const priorityEditor = document.createElement("select");
+    priorityEditor.className = "priority-edit-select";
+    priorityEditor.setAttribute(
         "aria-label",
         `Change priority for ${task.text}`,
     );
@@ -528,13 +590,14 @@ function startEditingPriority(task, priorityBadge) {
             option.selected = true;
         }
 
-        prioritySelect.appendChild(option);
+        priorityEditor.appendChild(option);
     });
 
     function finishPriorityEditing(shouldSave) {
         if (shouldSave) {
-            task.priority = prioritySelect.value;
+            task.priority = priorityEditor.value;
             saveTasks();
+
             showCompanionMessage([
                 "Priority adjusted. Veyra acknowledges the urgency.",
                 "Updated. Try respecting your own priorities now.",
@@ -545,35 +608,34 @@ function startEditingPriority(task, priorityBadge) {
         renderTasks();
     }
 
-    prioritySelect.addEventListener("change", () => {
+    priorityEditor.addEventListener("change", () => {
         finishPriorityEditing(true);
     });
 
-    prioritySelect.addEventListener("blur", () => {
+    priorityEditor.addEventListener("blur", () => {
         finishPriorityEditing(false);
     });
 
-    prioritySelect.addEventListener("keydown", (event) => {
+    priorityEditor.addEventListener("keydown", (event) => {
         if (event.key === "Escape") {
-            prioritySelect.value = task.priority;
+            priorityEditor.value = task.priority;
             finishPriorityEditing(false);
         }
     });
 
-    priorityBadge.replaceWith(prioritySelect);
-
-    prioritySelect.focus();
+    priorityBadge.replaceWith(priorityEditor);
+    priorityEditor.focus();
 }
 
 function startEditingDueDate(task, dueDateLabel) {
     const dueDateEditor = document.createElement("div");
     dueDateEditor.className = "due-date-editor";
 
-    const dueDateInput = document.createElement("input");
-    dueDateInput.className = "due-date-input";
-    dueDateInput.type = "date";
-    dueDateInput.value = task.dueDate;
-    dueDateInput.setAttribute("aria-label", `Change due date for ${task.text}`);
+    const dueDateField = document.createElement("input");
+    dueDateField.className = "due-date-input";
+    dueDateField.type = "date";
+    dueDateField.value = task.dueDate;
+    dueDateField.setAttribute("aria-label", `Change due date for ${task.text}`);
 
     const clearDateButton = document.createElement("button");
     clearDateButton.className = "clear-date";
@@ -586,7 +648,7 @@ function startEditingDueDate(task, dueDateLabel) {
 
     function finishDueDateEditing(shouldSave) {
         if (shouldSave) {
-            task.dueDate = dueDateInput.value;
+            task.dueDate = dueDateField.value;
             saveTasks();
 
             showCompanionMessage([
@@ -599,32 +661,52 @@ function startEditingDueDate(task, dueDateLabel) {
         renderTasks();
     }
 
-    dueDateInput.addEventListener("change", () => {
+    dueDateField.addEventListener("change", () => {
         finishDueDateEditing(true);
     });
 
-    dueDateInput.addEventListener("keydown", (event) => {
+    dueDateField.addEventListener("keydown", (event) => {
         if (event.key === "Escape") {
             finishDueDateEditing(false);
         }
     });
 
     clearDateButton.addEventListener("click", () => {
-        dueDateInput.value = "";
+        dueDateField.value = "";
         finishDueDateEditing(true);
     });
 
     dueDateLabel.replaceWith(dueDateEditor);
 
-    dueDateEditor.appendChild(dueDateInput);
+    dueDateEditor.appendChild(dueDateField);
     dueDateEditor.appendChild(clearDateButton);
 
-    dueDateInput.focus();
+    dueDateField.focus();
 }
 
 function createTaskElement(task) {
     const li = document.createElement("li");
     li.className = "task-item";
+
+    if (currentSort === "manual") {
+        li.addEventListener("dragover", (event) => {
+            event.preventDefault();
+            li.classList.add("drag-over");
+        });
+
+        li.addEventListener("dragleave", () => {
+            li.classList.remove("drag-over");
+        });
+
+        li.addEventListener("drop", (event) => {
+            event.preventDefault();
+
+            li.classList.remove("drag-over");
+
+            reorderTaskByDrag(draggedTaskId, task.id);
+            draggedTaskId = null;
+        });
+    }
 
     if (task.completed) {
         li.classList.add("task-completed");
@@ -640,6 +722,8 @@ function createTaskElement(task) {
             ? `Mark task incomplete: ${task.text}`
             : `Mark task complete: ${task.text}`,
     );
+    completeButton.setAttribute("aria-pressed", String(task.completed));
+
     completeButton.addEventListener("click", () => {
         task.completed = !task.completed;
         task.completedAt = task.completed ? new Date().toISOString() : null;
@@ -711,6 +795,73 @@ function createTaskElement(task) {
         startEditingTask(task, taskLabel);
     });
 
+    let dragHandle;
+    let orderControls;
+
+    if (currentSort === "manual") {
+        const taskIndex = tasks.findIndex(
+            (currentTask) => currentTask.id === task.id,
+        );
+
+        dragHandle = document.createElement("button");
+        dragHandle.className = "drag-handle";
+        dragHandle.type = "button";
+        dragHandle.textContent = "⠿";
+        dragHandle.draggable = true;
+        dragHandle.setAttribute("aria-label", `Drag to move ${task.text}`);
+        dragHandle.setAttribute("title", "Drag to reorder task");
+
+        dragHandle.addEventListener("dragstart", (event) => {
+            draggedTaskId = task.id;
+
+            event.dataTransfer.effectAllowed = "move";
+            event.dataTransfer.setData("text/plain", task.id);
+
+            li.classList.add("is-dragging");
+        });
+
+        dragHandle.addEventListener("dragend", () => {
+            draggedTaskId = null;
+
+            li.classList.remove("is-dragging");
+
+            document
+                .querySelectorAll(".task-item.drag-over")
+                .forEach((taskItem) => {
+                    taskItem.classList.remove("drag-over");
+                });
+        });
+
+        orderControls = document.createElement("div");
+        orderControls.className = "task-order-controls";
+        orderControls.setAttribute("aria-label", `Move ${task.text}`);
+
+        const moveUpButton = document.createElement("button");
+        moveUpButton.className = "move-task";
+        moveUpButton.type = "button";
+        moveUpButton.textContent = "↑";
+        moveUpButton.disabled = taskIndex === 0;
+        moveUpButton.setAttribute("aria-label", `Move ${task.text} up`);
+
+        moveUpButton.addEventListener("click", () => {
+            moveTask(task.id, -1);
+        });
+
+        const moveDownButton = document.createElement("button");
+        moveDownButton.className = "move-task";
+        moveDownButton.type = "button";
+        moveDownButton.textContent = "↓";
+        moveDownButton.disabled = taskIndex === tasks.length - 1;
+        moveDownButton.setAttribute("aria-label", `Move ${task.text} down`);
+
+        moveDownButton.addEventListener("click", () => {
+            moveTask(task.id, 1);
+        });
+
+        orderControls.appendChild(moveUpButton);
+        orderControls.appendChild(moveDownButton);
+    }
+
     const deleteButton = document.createElement("button");
     deleteButton.className = "delete-task";
     deleteButton.type = "button";
@@ -735,11 +886,21 @@ function createTaskElement(task) {
 
         showCompanionMessage(deleteTaskMessages);
     });
+
     li.appendChild(completeButton);
     li.appendChild(taskIcon);
     li.appendChild(taskLabel);
     li.appendChild(priorityBadge);
     li.appendChild(dueDateLabel);
+
+    if (dragHandle) {
+        li.appendChild(dragHandle);
+    }
+
+    if (orderControls) {
+        li.appendChild(orderControls);
+    }
+
     li.appendChild(editButton);
     li.appendChild(deleteButton);
 
@@ -763,6 +924,7 @@ function handleTaskSubmit(event) {
         priority: prioritySelect.value,
         dueDate: dueDateInput.value,
         completed: false,
+        completedAt: null,
         createdAt: Date.now(),
     };
 

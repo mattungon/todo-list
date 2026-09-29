@@ -1060,6 +1060,101 @@ button.due-date:focus-visible {
     color: #ffb0d2;
     background: rgba(255, 148, 197, 0.1);
 }
+.task-order-controls {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 4px;
+  align-items: center;
+}
+.drag-handle {
+  display: grid;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--subtle-text);
+  background: transparent;
+  cursor: grab;
+  font-size: 1.1rem;
+  letter-spacing: -0.12em;
+  line-height: 1;
+  place-items: center;
+  touch-action: none;
+  transition:
+    color 160ms ease,
+    background 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.drag-handle:hover {
+  border-color: rgba(169, 150, 255, 0.38);
+  color: var(--purple);
+  background: rgba(169, 150, 255, 0.12);
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+  transform: scale(0.96);
+}
+
+.drag-handle:focus-visible {
+  outline: 3px solid rgba(169, 150, 255, 0.55);
+  outline-offset: 2px;
+}
+
+.task-item.is-dragging {
+  border-color: rgba(169, 150, 255, 0.78);
+  opacity: 0.5;
+  transform: scale(0.98);
+}
+
+.task-item.drag-over {
+  border-color: #91ead4;
+  box-shadow:
+    0 0 0 3px rgba(137, 230, 196, 0.16),
+    0 14px 28px rgba(137, 230, 196, 0.14);
+}
+
+.move-task {
+  display: grid;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--muted-text);
+  background: transparent;
+  font-size: 0.9rem;
+  font-weight: 800;
+  line-height: 1;
+  place-items: center;
+  transition:
+    color 160ms ease,
+    background 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.move-task:hover:not(:disabled) {
+  border-color: rgba(169, 150, 255, 0.38);
+  color: var(--purple);
+  background: rgba(169, 150, 255, 0.12);
+  transform: translateY(-1px);
+}
+
+.move-task:disabled {
+  color: rgba(194, 184, 208, 0.35);
+  cursor: not-allowed;
+}
+
+.move-task:focus-visible {
+  outline: 3px solid rgba(169, 150, 255, 0.55);
+  outline-offset: 2px;
+}
 
 .delete-task {
     display: grid;
@@ -1229,6 +1324,9 @@ button.due-date:focus-visible {
 }
 
 @media (max-width: 600px) {
+
+    .task-order-controls {
+    display: none;}
     .app-shell {
         align-items: start;
         padding: 16px 12px;
@@ -1329,6 +1427,10 @@ button.due-date:focus-visible {
   #undo-button,
   .dialog-cancel,
   .start-fresh,
+  .task-order-controls,
+.move-task,
+.drag-handle,
+.task-item.is-dragging,
   .dialog-confirm {
     transition: none;
   }
