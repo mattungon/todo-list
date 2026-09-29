@@ -27,31 +27,69 @@
                         <p class="eyebrow">MY DAILY TASKS</p>
                         <h1 id="app-title">Momentum</h1>
                     </div>
+
+                    <button
+                        id="theme-toggle"
+                        class="theme-toggle"
+                        type="button"
+                        aria-pressed="false"
+                        aria-label="Switch to day theme"
+                    >
+                        <span class="theme-toggle-icon" aria-hidden="true"
+                            >☀</span
+                        >
+                        <span id="theme-toggle-text">Day mode</span>
+                    </button>
                 </header>
 
-                <section class="companion-card" aria-live="polite">
-                    <div class="veyra" aria-hidden="true">
-                        <span class="veyra-hair veyra-hair-left"></span>
-                        <span class="veyra-hair veyra-hair-right"></span>
-
-                        <span class="veyra-ear veyra-ear-left"></span>
-                        <span class="veyra-ear veyra-ear-right"></span>
-
-                        <span class="veyra-face">
-                            <span class="veyra-eye veyra-eye-left"></span>
-                            <span class="veyra-eye veyra-eye-right"></span>
-                            <span class="veyra-mouth"></span>
+                <section
+                    id="companion-card"
+                    class="companion-card"
+                    aria-live="polite"
+                >
+                    <div
+                        id="mimo"
+                        class="mimo"
+                        role="img"
+                        aria-label="Mimo, your cute moon-rabbit task companion"
+                    >
+                        <span class="mimo-ear mimo-ear-left">
+                            <span class="mimo-ear-inner"></span>
                         </span>
 
-                        <span class="veyra-cape"></span>
+                        <span class="mimo-ear mimo-ear-right">
+                            <span class="mimo-ear-inner"></span>
+                        </span>
+
+                        <span class="mimo-body">
+                            <span class="mimo-face">
+                                <span class="mimo-eye mimo-eye-left"></span>
+                                <span class="mimo-eye mimo-eye-right"></span>
+
+                                <span class="mimo-cheek mimo-cheek-left"></span>
+                                <span
+                                    class="mimo-cheek mimo-cheek-right"
+                                ></span>
+
+                                <span id="mimo-mouth" class="mimo-mouth"></span>
+                            </span>
+
+                            <span class="mimo-belly"></span>
+                            <span class="mimo-paw mimo-paw-left"></span>
+                            <span class="mimo-paw mimo-paw-right"></span>
+                        </span>
+
+                        <span class="mimo-wand" aria-hidden="true">
+                            <span class="mimo-wand-star">✦</span>
+                        </span>
                     </div>
 
                     <div class="companion-copy">
-                        <p class="companion-label">YOUR TASK MAGE</p>
-                        <h2>Veyra is unimpressed</h2>
+                        <p class="companion-label">YOUR TASK BUNNY</p>
+                        <h2>Mimo is waiting</h2>
 
                         <p id="companion-message">
-                            “Who do you think will finish those tasks—me? Move.”
+                            “A tiny task is still a task. Let’s do it.”
                         </p>
                     </div>
                 </section>
@@ -67,7 +105,6 @@
                             type="text"
                             placeholder="What needs doing?"
                             autocomplete="off"
-                            maxlength="100"
                         />
 
                         <button type="submit" class="add-button">
@@ -89,7 +126,6 @@
 
                         <label class="date-label" for="due-date">
                             <span>Due date</span>
-
                             <input id="due-date" type="date" />
                         </label>
                     </div>
@@ -101,6 +137,7 @@
                             <p class="section-label">TASKS</p>
                             <h2>Your tasks</h2>
                         </div>
+
                         <div class="task-filters" aria-label="Filter tasks">
                             <button
                                 class="filter-button is-active"
@@ -128,6 +165,7 @@
                             >
                                 Completed
                             </button>
+
                             <button
                                 id="clear-completed"
                                 class="clear-completed"
@@ -147,6 +185,7 @@
                             </button>
                         </div>
                     </div>
+
                     <label class="sort-label" for="sort-select">
                         <span>Sort</span>
 
@@ -169,6 +208,7 @@
                             autocomplete="off"
                         />
                     </label>
+
                     <p class="shortcut-hint">
                         Press <kbd>/</kbd> to search
                         <span aria-hidden="true">·</span>
@@ -180,6 +220,7 @@
                     <p id="task-count" class="task-count" aria-live="polite">
                         No tasks yet
                     </p>
+
                     <p
                         id="daily-summary"
                         class="daily-summary"
@@ -211,6 +252,7 @@
                 </section>
             </section>
         </main>
+
         <dialog
             id="shortcut-dialog"
             class="shortcut-dialog"
@@ -238,7 +280,7 @@
                     </div>
 
                     <div class="shortcut-row">
-                        <span>Close dialog or clear focus</span>
+                        <span>Close dialog or clear search</span>
                         <kbd>Esc</kbd>
                     </div>
                 </div>
@@ -254,6 +296,7 @@
                 </div>
             </div>
         </dialog>
+
         <dialog
             id="clear-dialog"
             class="clear-dialog"
@@ -283,6 +326,7 @@
                 </div>
             </form>
         </dialog>
+
         <div
             id="undo-toast"
             class="undo-toast"

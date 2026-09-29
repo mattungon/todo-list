@@ -5,7 +5,9 @@ const dueDateInput = document.querySelector("#due-date");
 const taskList = document.querySelector("#task-list");
 const emptyState = document.querySelector("#empty-state");
 const taskCount = document.querySelector("#task-count");
+const companionCard = document.querySelector("#companion-card");
 const companionMessage = document.querySelector("#companion-message");
+const mimo = document.querySelector("#mimo");
 const filterButtons = document.querySelectorAll(".filter-button");
 const clearCompletedButton = document.querySelector("#clear-completed");
 const saveStatus = document.querySelector("#save-status");
@@ -21,9 +23,12 @@ const startFreshButton = document.querySelector("#start-fresh");
 const todoApp = document.querySelector(".todo-app");
 const shortcutDialog = document.querySelector("#shortcut-dialog");
 const shortcutDialogClose = document.querySelector("#shortcut-dialog-close");
+const themeToggle = document.querySelector("#theme-toggle");
+const themeToggleText = document.querySelector("#theme-toggle-text");
 
 const storageKey = "momentum-tasks";
 const sortStorageKey = "momentum-sort";
+const themeStorageKey = "momentum-theme";
 
 let tasks = [];
 let currentFilter = "all";
@@ -36,6 +41,7 @@ let undoTimeout;
 let cleanupAction = "clear";
 let draggedTaskId = null;
 let storageAvailable = true;
+let mimoReactionTimeout;
 
 const addTaskMessages = [
     "Another task? Fine. Put it on the list.",
@@ -52,66 +58,80 @@ const deleteTaskMessages = [
 ];
 
 const emptyTaskMessages = [
-    "Nothing left? Suspiciously productive.",
-    "The list is clear. Enjoy this rare victory.",
-    "No tasks remain. Veyra is almost impressed.",
+    "Nothing left? Mimo is impressed.",
+    "The list is clear. Enjoy this tiny victory.",
+    "No tasks remain. Mimo gives you a gold star.",
 ];
 
 const completeTaskMessages = [
-    "Completed. Veyra reluctantly approves.",
+    "Completed! Mimo is doing a happy hop.",
     "One task down. Keep the streak alive.",
-    "Done. See? You are capable of progress.",
+    "Done. Mimo knew you could do it.",
 ];
 
 const incompleteTaskMessages = [
-    "Back on the list. No judgment. Much.",
-    "Unfinished again? Veyra has questions.",
-    "Restored. Finish it when you are ready.",
+    "Back on the list. Mimo will wait.",
+    "Unfinished again? It happens. Try once more.",
+    "Restored. Mimo believes in a second attempt.",
 ];
 
 const clearCompletedMessages = [
-    "Clean slate. Your completed tasks have been archived to nowhere.",
-    "Cleared. Veyra approves of removing evidence.",
-    "Finished tasks removed. The list looks less intimidating now.",
+    "Clean slate. Mimo swept away the finished tasks.",
+    "Cleared. Your list looks lighter now.",
+    "Finished tasks removed. Mimo approves of the tidying.",
 ];
 
 const allCompleteMessages = [
-    "Every task is complete. Veyra is genuinely impressed.",
-    "The list is conquered. Enjoy your victory.",
-    "All done. Momentum achieved.",
+    "Every task is complete! Mimo is celebrating!",
+    "The list is conquered. Mimo gives you a star.",
+    "All done. Momentum achieved!",
 ];
 
 const startFreshMessages = [
-    "A fresh start. Keep the active tasks moving.",
+    "A fresh start. Mimo is ready for today.",
     "Yesterday is cleared away. Today gets your focus.",
-    "New page, same capable task mage.",
+    "New page, fresh paws, same capable you.",
 ];
 
 const taskOrderMessages = [
-    "Moved. The list now follows your command.",
-    "Reordered. Veyra approves of the improved formation.",
-    "Task position updated. Proceed accordingly.",
+    "Moved. Mimo put the task exactly where you wanted.",
+    "Reordered. A tidy list makes Mimo happy.",
+    "Task position updated. Nice organization.",
 ];
+
 const storageMessages = {
     saved: "Saved locally.",
-    failed: "Veyra could not save this change. Check your browser storage settings.",
+    failed: "Mimo could not save this change. Check your browser storage settings.",
     unavailable:
         "Local saving is unavailable. Your changes may disappear after refresh.",
 };
 
-shortcutDialogClose.addEventListener("click", () => {
-    shortcutDialog.close();
-    taskInput.focus();
-});
+const mimoReactionClasses = [
+    "is-proud",
+    "is-celebrating",
+    "is-skeptical",
+    "is-annoyed",
+    "is-relieved",
+];
 
-shortcutDialog.addEventListener("click", (event) => {
-    if (event.target === shortcutDialog) {
+/* Event listeners */
+
+if (shortcutDialogClose && shortcutDialog) {
+    shortcutDialogClose.addEventListener("click", () => {
         shortcutDialog.close();
-    }
-});
+        taskInput.focus();
+    });
+
+    shortcutDialog.addEventListener("click", (event) => {
+        if (event.target === shortcutDialog) {
+            shortcutDialog.close();
+        }
+    });
+}
 
 window.addEventListener("keydown", (event) => {
     const activeElement = document.activeElement;
+
     const isTyping =
         activeElement instanceof HTMLInputElement ||
         activeElement instanceof HTMLTextAreaElement ||
@@ -119,7 +139,7 @@ window.addEventListener("keydown", (event) => {
         activeElement?.isContentEditable;
 
     if (event.key === "Escape") {
-        if (shortcutDialog.open) {
+        if (shortcutDialog?.open) {
             shortcutDialog.close();
             return;
         }
@@ -129,7 +149,6 @@ window.addEventListener("keydown", (event) => {
             currentSearch = "";
             renderTasks();
             taskInput.focus();
-            return;
         }
 
         return;
@@ -155,13 +174,45 @@ window.addEventListener("keydown", (event) => {
     if (event.key === "?") {
         event.preventDefault();
 
-        if (!shortcutDialog.open) {
+        if (shortcutDialog && !shortcutDialog.open) {
             shortcutDialog.showModal();
         }
     }
 });
 
 taskForm.addEventListener("submit", handleTaskSubmit);
+
+if (themeToggle) {
+    themeToggle.addEventListener("click", () => {
+        const nextTheme =
+            document.documentElement.dataset.theme === "day" ? "night" : "day";
+
+        applyTheme(nextTheme);
+
+        try {
+            localStorage.setItem(themeStorageKey, nextTheme);
+        } catch (error) {
+            console.error("Momentum could not save theme preference:", error);
+            showSaveStatus(storageMessages.failed);
+        }
+
+        showCompanionMessage(
+            nextTheme === "day"
+                ? [
+                      "Sunlight mode activated. Mimo approves of the brightness.",
+                      "A bright new day for small wins.",
+                      "Day mode on. Mimo found the sunshine.",
+                  ]
+                : [
+                      "Moonlight mode restored. Mimo feels at home.",
+                      "Night mode on. Cozy focus returns.",
+                      "Back to the stars. Mimo is ready.",
+                  ],
+        );
+
+        triggerMimoReaction(nextTheme === "day" ? "is-proud" : "is-relieved");
+    });
+}
 
 filterButtons.forEach((button) => {
     button.addEventListener("click", () => {
@@ -215,12 +266,15 @@ clearDialog.addEventListener("close", () => {
 
     if (tasks.length === 0) {
         showCompanionMessage(emptyTaskMessages);
+        triggerMimoReaction("is-relieved");
         return;
     }
 
     showCompanionMessage(
         cleanupAction === "fresh" ? startFreshMessages : clearCompletedMessages,
     );
+
+    triggerMimoReaction("is-relieved");
 });
 
 undoButton.addEventListener("click", () => {
@@ -244,11 +298,12 @@ undoButton.addEventListener("click", () => {
     renderTasks();
 
     showCompanionMessage([
-        "Restored. Veyra will pretend that never happened.",
-        "The task returns. So does responsibility.",
-        "Undo accepted. A rare second chance.",
+        "Restored. Mimo saved it from the void.",
+        "The task returns. Mimo offers moral support.",
+        "Undo accepted. A rare and fluffy second chance.",
     ]);
 
+    triggerMimoReaction("is-annoyed");
     hideUndoToast();
 });
 
@@ -257,6 +312,7 @@ sortSelect.addEventListener("change", () => {
 
     try {
         localStorage.setItem(sortStorageKey, currentSort);
+        storageAvailable = true;
     } catch (error) {
         storageAvailable = false;
 
@@ -275,25 +331,49 @@ taskSearchInput.addEventListener("input", () => {
 
 window.addEventListener("storage", (event) => {
     if (event.key === storageKey) {
+        const isEditing =
+            document.querySelector(".task-edit-input") ||
+            document.querySelector(".priority-edit-select") ||
+            document.querySelector(".due-date-input");
+
+        if (isEditing) {
+            showCompanionMessage([
+                "Another tab changed the list. Finish this edit before refreshing.",
+                "The other Momentum window made a change. Your edit is still active.",
+            ]);
+            return;
+        }
+
         loadTasks();
         renderTasks();
 
         showCompanionMessage([
             "Another Momentum window changed the list.",
-            "The list synchronized. Multitasking, apparently.",
+            "The list synchronized. Mimo noticed.",
             "Tasks updated from another tab.",
         ]);
+
+        triggerMimoReaction("is-skeptical");
     }
 
     if (event.key === sortStorageKey) {
         loadSortPreference();
         renderTasks();
     }
+
+    if (event.key === themeStorageKey) {
+        applyTheme(event.newValue === "day" ? "day" : "night");
+    }
 });
 
+/* Startup */
+
+loadThemePreference();
 loadTasks();
 loadSortPreference();
 renderTasks();
+
+/* Sorting and storage */
 
 function getSortedTasks() {
     const priorityOrder = {
@@ -358,11 +438,14 @@ function saveTasks() {
         console.error("Momentum could not save tasks:", error);
 
         showSaveStatus(storageMessages.failed);
+
         showCompanionMessage([
             storageMessages.failed,
             "The change exists for now, but local saving failed.",
-            "Storage refused the update. Veyra is displeased.",
+            "Storage refused the update. Mimo is concerned.",
         ]);
+
+        triggerMimoReaction("is-annoyed");
 
         return false;
     }
@@ -391,7 +474,6 @@ function loadTasks() {
 
     try {
         const parsedTasks = JSON.parse(savedTasks);
-
         tasks = Array.isArray(parsedTasks) ? parsedTasks : [];
     } catch (error) {
         tasks = [];
@@ -400,8 +482,10 @@ function loadTasks() {
 
         showCompanionMessage([
             "The saved task data was unreadable, so the list was reset.",
-            "Veyra found corrupted task data and cleared the damage.",
+            "Mimo found tangled task magic and cleared the damage.",
         ]);
+
+        triggerMimoReaction("is-annoyed");
     }
 }
 
@@ -410,6 +494,7 @@ function loadSortPreference() {
 
     try {
         savedSort = localStorage.getItem(sortStorageKey);
+        storageAvailable = true;
     } catch (error) {
         storageAvailable = false;
 
@@ -433,9 +518,65 @@ function loadSortPreference() {
     }
 }
 
+function applyTheme(theme) {
+    const isDayTheme = theme === "day";
+
+    document.documentElement.dataset.theme = isDayTheme ? "day" : "night";
+
+    if (themeToggle) {
+        themeToggle.setAttribute("aria-pressed", String(isDayTheme));
+
+        themeToggle.setAttribute(
+            "aria-label",
+            isDayTheme ? "Switch to night theme" : "Switch to day theme",
+        );
+    }
+
+    if (themeToggleText) {
+        themeToggleText.textContent = isDayTheme ? "Night mode" : "Day mode";
+    }
+}
+
+function loadThemePreference() {
+    let savedTheme;
+
+    try {
+        savedTheme = localStorage.getItem(themeStorageKey);
+    } catch (error) {
+        console.error("Momentum could not read theme preference:", error);
+        applyTheme("night");
+        return;
+    }
+
+    applyTheme(savedTheme === "day" ? "day" : "night");
+}
+
+/* Shared helpers */
+
 function showCompanionMessage(messages) {
     const randomIndex = Math.floor(Math.random() * messages.length);
     companionMessage.textContent = messages[randomIndex];
+}
+
+function triggerMimoReaction(reaction) {
+    if (!companionCard || !mimo || !mimoReactionClasses.includes(reaction)) {
+        return;
+    }
+
+    clearTimeout(mimoReactionTimeout);
+
+    companionCard.classList.remove(...mimoReactionClasses);
+    mimo.classList.remove(...mimoReactionClasses);
+
+    requestAnimationFrame(() => {
+        companionCard.classList.add(reaction);
+        mimo.classList.add(reaction);
+    });
+
+    mimoReactionTimeout = setTimeout(() => {
+        companionCard.classList.remove(reaction);
+        mimo.classList.remove(reaction);
+    }, 1050);
 }
 
 function showSaveStatus(message = storageMessages.saved) {
@@ -471,6 +612,8 @@ function hideUndoToast() {
     undoToast.hidden = true;
 }
 
+/* Task ordering */
+
 function moveTask(taskId, direction) {
     const currentIndex = tasks.findIndex((task) => task.id === taskId);
 
@@ -485,12 +628,12 @@ function moveTask(taskId, direction) {
     }
 
     const [movedTask] = tasks.splice(currentIndex, 1);
-
     tasks.splice(targetIndex, 0, movedTask);
 
     saveTasks();
     renderTasks();
     showCompanionMessage(taskOrderMessages);
+    triggerMimoReaction("is-skeptical");
 }
 
 function reorderTaskByDrag(draggedTaskId, targetTaskId) {
@@ -516,7 +659,10 @@ function reorderTaskByDrag(draggedTaskId, targetTaskId) {
     saveTasks();
     renderTasks();
     showCompanionMessage(taskOrderMessages);
+    triggerMimoReaction("is-skeptical");
 }
+
+/* Task counts and dates */
 
 function updateTaskCount() {
     const totalTasks = tasks.length;
@@ -582,6 +728,7 @@ function celebrateAllTasksComplete() {
     });
 
     showCompanionMessage(allCompleteMessages);
+    triggerMimoReaction("is-celebrating");
 }
 
 function getDueDateDetails(dateValue) {
@@ -631,6 +778,8 @@ function getDueDateDetails(dateValue) {
     };
 }
 
+/* Filtering and rendering */
+
 function shouldShowTask(task) {
     const matchesFilter =
         currentFilter === "all" ||
@@ -665,12 +814,13 @@ function renderTasks() {
     emptyState.hidden = tasks.length !== 0;
 }
 
+/* Editing */
+
 function startEditingTask(task, taskLabel) {
     const editInput = document.createElement("input");
     editInput.className = "task-edit-input";
     editInput.type = "text";
     editInput.value = task.text;
-    editInput.maxLength = 100;
     editInput.setAttribute("aria-label", "Edit task title");
 
     const editActions = document.createElement("div");
@@ -692,6 +842,12 @@ function startEditingTask(task, taskLabel) {
         if (shouldSave && newText) {
             task.text = newText;
             saveTasks();
+
+            showCompanionMessage([
+                "Task wording updated. Mimo accepts the revision.",
+                "Edited. Future-you will appreciate the clarity.",
+                "Updated. Now the task knows what it is.",
+            ]);
         }
 
         renderTasks();
@@ -757,10 +913,12 @@ function startEditingPriority(task, priorityBadge) {
             saveTasks();
 
             showCompanionMessage([
-                "Priority adjusted. Veyra acknowledges the urgency.",
-                "Updated. Try respecting your own priorities now.",
-                "Priority changed. The task knows its place.",
+                "Priority adjusted. Mimo understands the urgency.",
+                "Updated. A clear priority helps a lot.",
+                "Priority changed. Mimo filed it carefully.",
             ]);
+
+            triggerMimoReaction("is-skeptical");
         }
 
         renderTasks();
@@ -810,10 +968,12 @@ function startEditingDueDate(task, dueDateLabel) {
             saveTasks();
 
             showCompanionMessage([
-                "Due date updated. Time is now officially watching you.",
-                "New deadline noted. Veyra expects results.",
-                "Date changed. Do not pretend you did not see it.",
+                "Due date updated. Mimo marked the calendar.",
+                "New deadline noted. Mimo believes in you.",
+                "Date changed. Time is now watching.",
             ]);
+
+            triggerMimoReaction("is-skeptical");
         }
 
         renderTasks();
@@ -842,6 +1002,8 @@ function startEditingDueDate(task, dueDateLabel) {
     dueDateField.focus();
 }
 
+/* Task elements */
+
 function createTaskElement(task) {
     const li = document.createElement("li");
     li.className = "task-item";
@@ -858,7 +1020,6 @@ function createTaskElement(task) {
 
         li.addEventListener("drop", (event) => {
             event.preventDefault();
-
             li.classList.remove("drag-over");
 
             reorderTaskByDrag(draggedTaskId, task.id);
@@ -900,10 +1061,12 @@ function createTaskElement(task) {
             }
 
             showCompanionMessage(completeTaskMessages);
+            triggerMimoReaction("is-proud");
             return;
         }
 
         showCompanionMessage(incompleteTaskMessages);
+        triggerMimoReaction("is-annoyed");
     });
 
     const taskIcon = document.createElement("span");
@@ -980,7 +1143,6 @@ function createTaskElement(task) {
 
         dragHandle.addEventListener("dragend", () => {
             draggedTaskId = null;
-
             li.classList.remove("is-dragging");
 
             document
@@ -1039,10 +1201,12 @@ function createTaskElement(task) {
 
         if (tasks.length === 0) {
             showCompanionMessage(emptyTaskMessages);
+            triggerMimoReaction("is-annoyed");
             return;
         }
 
         showCompanionMessage(deleteTaskMessages);
+        triggerMimoReaction("is-annoyed");
     });
 
     li.appendChild(completeButton);
@@ -1065,19 +1229,23 @@ function createTaskElement(task) {
     return li;
 }
 
+/* Add task */
+
 function handleTaskSubmit(event) {
     event.preventDefault();
 
     const taskText = taskInput.value.trim();
 
     if (!taskText) {
-        alert("Write a task first. I am not doing your thinking for you.");
+        alert("Write a task first. Mimo cannot read your mind yet.");
         taskInput.focus();
         return;
     }
 
     const newTask = {
-        id: crypto.randomUUID(),
+        id:
+            crypto.randomUUID?.() ||
+            `${Date.now()}-${Math.random().toString(16).slice(2)}`,
         text: taskText,
         priority: prioritySelect.value,
         dueDate: dueDateInput.value,
@@ -1091,6 +1259,7 @@ function handleTaskSubmit(event) {
     saveTasks();
     renderTasks();
     showCompanionMessage(addTaskMessages);
+    triggerMimoReaction("is-skeptical");
 
     taskInput.value = "";
     dueDateInput.value = "";
