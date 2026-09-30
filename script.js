@@ -1,5 +1,6 @@
 const taskForm = document.querySelector("#task-form");
 const taskInput = document.querySelector("#task-input");
+const taskDetailsInput = document.querySelector("#task-details");
 const prioritySelect = document.querySelector("#priority-select");
 const dueDateInput = document.querySelector("#due-date");
 const taskList = document.querySelector("#task-list");
@@ -393,13 +394,13 @@ function getSortedTasks() {
         if (completionDifference !== 0) {
             return completionDifference;
         }
+
         if (currentSort === "due-date") {
             const firstDate = firstTask.dueDate || "9999-12-31";
             const secondDate = secondTask.dueDate || "9999-12-31";
 
             return firstDate.localeCompare(secondDate);
         }
-
 
         if (currentSort === "priority") {
             const priorityDifference =
@@ -414,13 +415,6 @@ function getSortedTasks() {
         }
 
         if (currentSort === "active-first") {
-            const completionDifference =
-                Number(firstTask.completed) - Number(secondTask.completed);
-
-            if (completionDifference !== 0) {
-                return completionDifference;
-            }
-
             return firstTask.text.localeCompare(secondTask.text);
         }
 
@@ -481,7 +475,26 @@ function loadTasks() {
 
     try {
         const parsedTasks = JSON.parse(savedTasks);
-        tasks = Array.isArray(parsedTasks) ? parsedTasks : [];
+        const validPriorities = ["low", "medium", "high"];
+
+        tasks = Array.isArray(parsedTasks)
+            ? parsedTasks.map((task) => ({
+                  id:
+                      typeof task.id === "string" && task.id
+                          ? task.id
+                          : crypto.randomUUID?.() ||
+                            `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+                  text: typeof task.text === "string" ? task.text : "",
+                  details: typeof task.details === "string" ? task.details : "",
+                  priority: validPriorities.includes(task.priority)
+                      ? task.priority
+                      : "medium",
+                  dueDate: typeof task.dueDate === "string" ? task.dueDate : "",
+                  completed: Boolean(task.completed),
+                  completedAt: task.completedAt || null,
+                  createdAt: Number(task.createdAt) || Date.now(),
+              }))
+            : [];
     } catch (error) {
         tasks = [];
 
@@ -794,7 +807,9 @@ function shouldShowTask(task) {
         (currentFilter === "completed" && task.completed);
 
     const taskText = task.text.toLowerCase();
-    const matchesSearch = taskText.includes(currentSearch);
+    const taskDetails = task.details.toLowerCase();
+    const matchesSearch =
+        taskText.includes(currentSearch) || taskDetails.includes(currentSearch);
 
     return matchesFilter && matchesSearch;
 }
@@ -1114,6 +1129,46 @@ function createTaskElement(task) {
         startEditingPriority(task, priorityBadge);
     });
 
+    let detailsButton;
+    let detailsPanel;
+
+    if (task.details) {
+        detailsButton = document.createElement("button");
+        detailsButton.className = "task-details-toggle";
+        detailsButton.type = "button";
+        detailsButton.textContent = "ⓘ";
+        detailsButton.setAttribute("aria-label", `Show info for ${task.text}`);
+        detailsButton.setAttribute("aria-expanded", "false");
+
+        detailsPanel = document.createElement("div");
+        detailsPanel.className = "task-details-panel";
+        detailsPanel.hidden = true;
+
+        const detailsHeading = document.createElement("p");
+        detailsHeading.className = "task-details-heading";
+        detailsHeading.textContent = "Info";
+
+        const detailsText = document.createElement("p");
+        detailsText.className = "task-details-text";
+        detailsText.textContent = task.details;
+
+        detailsPanel.appendChild(detailsHeading);
+        detailsPanel.appendChild(detailsText);
+
+        detailsButton.addEventListener("click", () => {
+            const willOpen = detailsPanel.hidden;
+
+            detailsPanel.hidden = !willOpen;
+            detailsButton.setAttribute("aria-expanded", String(willOpen));
+            detailsButton.setAttribute(
+                "aria-label",
+                `${willOpen ? "Hide" : "Show"} info for ${task.text}`,
+            );
+
+            li.classList.toggle("has-open-details", willOpen);
+        });
+    }
+
     const dueDateDetails = getDueDateDetails(task.dueDate);
 
     const dueDateLabel = document.createElement("button");
@@ -1216,6 +1271,10 @@ function createTaskElement(task) {
             (currentTask) => currentTask.id === task.id,
         );
 
+        if (taskIndex === -1) {
+            return;
+        }
+
         tasks.splice(taskIndex, 1);
 
         saveTasks();
@@ -1236,6 +1295,11 @@ function createTaskElement(task) {
     li.appendChild(taskIcon);
     li.appendChild(taskLabel);
     li.appendChild(priorityBadge);
+
+    if (detailsButton) {
+        li.appendChild(detailsButton);
+    }
+
     li.appendChild(dueDateLabel);
 
     if (dragHandle) {
@@ -1249,6 +1313,10 @@ function createTaskElement(task) {
     li.appendChild(editButton);
     li.appendChild(deleteButton);
 
+    if (detailsPanel) {
+        li.appendChild(detailsPanel);
+    }
+
     return li;
 }
 
@@ -1258,6 +1326,7 @@ function handleTaskSubmit(event) {
     event.preventDefault();
 
     const taskText = taskInput.value.trim();
+    const taskDetails = taskDetailsInput.value.trim();
 
     if (!taskText) {
         alert("Write a task first. Mimo cannot read your mind yet.");
@@ -1270,6 +1339,7 @@ function handleTaskSubmit(event) {
             crypto.randomUUID?.() ||
             `${Date.now()}-${Math.random().toString(16).slice(2)}`,
         text: taskText,
+        details: taskDetails,
         priority: prioritySelect.value,
         dueDate: dueDateInput.value,
         completed: false,
@@ -1285,6 +1355,7 @@ function handleTaskSubmit(event) {
     triggerMimoReaction("is-skeptical");
 
     taskInput.value = "";
+    taskDetailsInput.value = "";
     dueDateInput.value = "";
     taskInput.focus();
 }

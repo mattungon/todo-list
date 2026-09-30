@@ -1,345 +1,372 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta
-            name="description"
-            content="Momentum is a colorful interactive todo list."
-        />
-        <title>Momentum — Todo List</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Momentum is a colorful interactive todo list."
+    />
+    <title>Momentum — Todo List</title>
 
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
-            rel="stylesheet"
-        />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
 
-        <link rel="stylesheet" href="style.css" />
-    </head>
+    <link rel="stylesheet" href="style.css" />
+  </head>
 
-    <body>
-        <main class="app-shell">
-            <section class="todo-app">
-                <header class="app-header">
-                    <div>
-                        <p class="eyebrow">MY DAILY TASKS</p>
-                        <h1 id="app-title">Momentum</h1>
-                    </div>
-
-                    <button
-                        id="theme-toggle"
-                        class="theme-toggle"
-                        type="button"
-                        aria-pressed="false"
-                        aria-label="Switch to day theme"
-                    >
-                        <span class="theme-toggle-icon" aria-hidden="true"
-                            >☀</span
-                        >
-                        <span id="theme-toggle-text">Day mode</span>
-                    </button>
-                </header>
-
-                <section
-                    id="companion-card"
-                    class="companion-card"
-                    aria-live="polite"
-                >
-                    <div
-                        id="mimo"
-                        class="mimo"
-                        role="img"
-                        aria-label="Mimo, your cute moon-rabbit task companion"
-                    >
-                        <span class="mimo-ear mimo-ear-left">
-                            <span class="mimo-ear-inner"></span>
-                        </span>
-
-                        <span class="mimo-ear mimo-ear-right">
-                            <span class="mimo-ear-inner"></span>
-                        </span>
-
-                        <span class="mimo-body">
-                            <span class="mimo-face">
-                                <span class="mimo-eye mimo-eye-left"></span>
-                                <span class="mimo-eye mimo-eye-right"></span>
-
-                                <span class="mimo-cheek mimo-cheek-left"></span>
-                                <span
-                                    class="mimo-cheek mimo-cheek-right"
-                                ></span>
-
-                                <span id="mimo-mouth" class="mimo-mouth"></span>
-                            </span>
-
-                            <span class="mimo-belly"></span>
-                            <span class="mimo-paw mimo-paw-left"></span>
-                            <span class="mimo-paw mimo-paw-right"></span>
-                        </span>
-
-                        <span class="mimo-wand" aria-hidden="true">
-                            <span class="mimo-wand-star">✦</span>
-                        </span>
-                    </div>
-
-                    <div class="companion-copy">
-                        <p class="companion-label">YOUR TASK BUNNY</p>
-                        <h2>Mimo is waiting</h2>
-
-                        <p id="companion-message">
-                            “A tiny task is still a task. Let’s do it.”
-                        </p>
-                    </div>
-                </section>
-
-                <form id="task-form" class="task-form">
-                    <div class="task-entry-row">
-                        <label class="sr-only" for="task-input">
-                            Enter a new task
-                        </label>
-
-                        <input
-                            id="task-input"
-                            type="text"
-                            placeholder="What needs doing?"
-                            autocomplete="off"
-                        />
-
-                        <button type="submit" class="add-button">
-                            <span aria-hidden="true">+</span>
-                            Add task
-                        </button>
-                    </div>
-
-                    <div class="task-options">
-                        <label class="priority-label" for="priority-select">
-                            <span>Priority</span>
-
-                            <select id="priority-select">
-                                <option value="medium">Medium</option>
-                                <option value="high">High</option>
-                                <option value="low">Low</option>
-                            </select>
-                        </label>
-
-                        <label class="date-label" for="due-date">
-                            <span>Due date</span>
-                            <input id="due-date" type="date" />
-                        </label>
-                    </div>
-                </form>
-
-                <section class="task-section">
-                    <div class="task-heading">
-                        <div>
-                            <p class="section-label">TASKS</p>
-                            <h2>Your tasks</h2>
-                        </div>
-
-                        <div class="task-filters" aria-label="Filter tasks">
-                            <button
-                                class="filter-button is-active"
-                                type="button"
-                                data-filter="all"
-                                aria-pressed="true"
-                            >
-                                All
-                            </button>
-
-                            <button
-                                class="filter-button"
-                                type="button"
-                                data-filter="active"
-                                aria-pressed="false"
-                            >
-                                Active
-                            </button>
-
-                            <button
-                                class="filter-button"
-                                type="button"
-                                data-filter="completed"
-                                aria-pressed="false"
-                            >
-                                Completed
-                            </button>
-
-                            <button
-                                id="clear-completed"
-                                class="clear-completed"
-                                type="button"
-                                disabled
-                            >
-                                Clear completed
-                            </button>
-
-                            <button
-                                id="start-fresh"
-                                class="start-fresh"
-                                type="button"
-                                disabled
-                            >
-                                Start fresh
-                            </button>
-                        </div>
-                    </div>
-
-                    <label class="sort-label" for="sort-select">
-                        <span>Sort</span>
-
-                        <select id="sort-select">
-                            <option value="newest">Newest</option>
-                            <option value="due-date">Due date</option>
-                            <option value="priority">Priority</option>
-                            <option value="active-first">Active first</option>
-                            <option value="manual">Manual order</option>
-                        </select>
-                    </label>
-
-                    <label class="task-search" for="task-search-input">
-                        <span class="sr-only">Search tasks</span>
-
-                        <input
-                            id="task-search-input"
-                            type="search"
-                            placeholder="Search tasks..."
-                            autocomplete="off"
-                        />
-                    </label>
-
-                    <p class="shortcut-hint">
-                        Press <kbd>/</kbd> to search
-                        <span aria-hidden="true">·</span>
-                        <kbd>N</kbd> for a new task
-                        <span aria-hidden="true">·</span>
-                        <kbd>?</kbd> for shortcuts
-                    </p>
-
-                    <p id="task-count" class="task-count" aria-live="polite">
-                        No tasks yet
-                    </p>
-
-                    <p
-                        id="daily-summary"
-                        class="daily-summary"
-                        aria-live="polite"
-                    >
-                        No tasks completed today
-                    </p>
-
-                    <p
-                        id="save-status"
-                        class="save-status"
-                        role="status"
-                        aria-live="polite"
-                        aria-atomic="true"
-                    ></p>
-
-                    <p id="empty-state" class="empty-state">
-                        <span aria-hidden="true">✦</span>
-                        Your list is clear.<br />
-                        Add a task when you are ready.
-                    </p>
-
-                    <ul
-                        id="task-list"
-                        class="task-list"
-                        role="list"
-                        aria-label="Todo tasks"
-                    ></ul>
-                </section>
-            </section>
-        </main>
-
-        <dialog
-            id="shortcut-dialog"
-            class="shortcut-dialog"
-            aria-labelledby="shortcut-dialog-title"
+  <body>
+    <main class="app-shell">
+      <section class="todo-app" aria-labelledby="app-title">
+        <aside
+          id="companion-card"
+          class="companion-card"
+          aria-label="Momentum companion and app status"
+          aria-live="polite"
         >
-            <div class="shortcut-dialog-content">
-                <p class="clear-dialog-kicker">KEYBOARD CONTROL</p>
-
-                <h2 id="shortcut-dialog-title">Momentum shortcuts</h2>
-
-                <div class="shortcut-list">
-                    <div class="shortcut-row">
-                        <span>Focus task search</span>
-                        <kbd>/</kbd>
-                    </div>
-
-                    <div class="shortcut-row">
-                        <span>Focus new task</span>
-                        <kbd>N</kbd>
-                    </div>
-
-                    <div class="shortcut-row">
-                        <span>Show shortcuts</span>
-                        <kbd>?</kbd>
-                    </div>
-
-                    <div class="shortcut-row">
-                        <span>Close dialog or clear search</span>
-                        <kbd>Esc</kbd>
-                    </div>
-                </div>
-
-                <div class="shortcut-dialog-actions">
-                    <button
-                        id="shortcut-dialog-close"
-                        class="dialog-confirm"
-                        type="button"
-                    >
-                        Got it
-                    </button>
-                </div>
+          <header class="app-header">
+            <div>
+              <p class="eyebrow">MY DAILY TASKS</p>
+              <h1 id="app-title">Momentum</h1>
             </div>
-        </dialog>
 
-        <dialog
-            id="clear-dialog"
-            class="clear-dialog"
-            aria-labelledby="clear-dialog-title"
+            <button
+              id="theme-toggle"
+              class="theme-toggle"
+              type="button"
+              aria-pressed="false"
+              aria-label="Switch to day theme"
+            >
+              <span class="theme-toggle-icon" aria-hidden="true">☀</span>
+              <span id="theme-toggle-text">Day mode</span>
+            </button>
+          </header>
+
+          <div class="companion-content">
+            <div
+              id="mimo"
+              class="mimo"
+              role="img"
+              aria-label="Mimo, your cute moon-rabbit task companion"
+            >
+              <span class="mimo-ear mimo-ear-left">
+                <span class="mimo-ear-inner"></span>
+              </span>
+
+              <span class="mimo-ear mimo-ear-right">
+                <span class="mimo-ear-inner"></span>
+              </span>
+
+              <span class="mimo-body">
+                <span class="mimo-face">
+                  <span class="mimo-eye mimo-eye-left"></span>
+                  <span class="mimo-eye mimo-eye-right"></span>
+
+                  <span class="mimo-cheek mimo-cheek-left"></span>
+                  <span class="mimo-cheek mimo-cheek-right"></span>
+
+                  <span id="mimo-mouth" class="mimo-mouth"></span>
+                </span>
+
+                <span class="mimo-belly"></span>
+                <span class="mimo-paw mimo-paw-left"></span>
+                <span class="mimo-paw mimo-paw-right"></span>
+              </span>
+
+              <span class="mimo-wand" aria-hidden="true">
+                <span class="mimo-wand-star">✦</span>
+              </span>
+            </div>
+
+            <div class="companion-copy">
+              <p class="companion-label">YOUR TASK BUNNY</p>
+              <h2>Mimo is waiting</h2>
+
+              <p id="companion-message">
+                “A tiny task is still a task. Let’s do it.”
+              </p>
+            </div>
+          </div>
+
+          <div class="companion-status">
+            <p
+              id="daily-summary"
+              class="daily-summary"
+              aria-live="polite"
+            >
+              No tasks completed today
+            </p>
+
+            <p
+              id="save-status"
+              class="save-status"
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+            ></p>
+          </div>
+        </aside>
+
+        <section
+          class="task-composer"
+          aria-labelledby="add-task-heading"
         >
-            <form method="dialog" class="clear-dialog-content">
-                <p class="clear-dialog-kicker">TASK CLEANUP</p>
+          <div class="panel-heading">
+            <p class="section-label">CREATE</p>
+            <h2 id="add-task-heading">Add a task</h2>
+          </div>
 
-                <h2 id="clear-dialog-title">Clear completed tasks?</h2>
+          <form id="task-form" class="task-form">
+            <div class="task-entry-row">
+              <label class="sr-only" for="task-input">
+                Enter a new task
+              </label>
 
-                <p id="clear-dialog-message">
-                    This will permanently remove completed tasks from Momentum.
-                </p>
+              <input
+                id="task-input"
+                type="text"
+                placeholder="What needs doing?"
+                autocomplete="off"
+              />
 
-                <div class="clear-dialog-actions">
-                    <button class="dialog-cancel" type="submit" value="cancel">
-                        Cancel
-                    </button>
+              <button type="submit" class="add-button">
+                <span aria-hidden="true">+</span>
+                Add task
+              </button>
+            </div>
 
-                    <button
-                        class="dialog-confirm"
-                        type="submit"
-                        value="confirm"
-                    >
-                        Clear tasks
-                    </button>
-                </div>
-            </form>
-        </dialog>
+            <div class="task-options">
+              <label class="priority-label" for="priority-select">
+                <span>Priority</span>
 
-        <div
-            id="undo-toast"
-            class="undo-toast"
-            role="status"
-            aria-live="polite"
-            aria-atomic="true"
-            hidden
-        >
-            <p id="undo-message"></p>
+                <select id="priority-select">
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                  <option value="low">Low</option>
+                </select>
+              </label>
 
-            <button id="undo-button" type="button">Undo</button>
+              <label class="date-label" for="due-date">
+                <span>Due date</span>
+                <input id="due-date" type="date" />
+              </label>
+            </div>
+
+            <label class="task-details-label" for="task-details">
+              <span>Task info <em>(optional)</em></span>
+
+              <textarea
+                id="task-details"
+                name="task-details"
+                rows="3"
+                maxlength="500"
+                placeholder="Add notes, instructions, links, or extra context..."
+              ></textarea>
+            </label>
+          </form>
+        </section>
+
+        <section class="task-board" aria-labelledby="tasks-heading">
+          <div class="task-heading">
+            <div>
+              <p class="section-label">TASKS</p>
+              <h2 id="tasks-heading">Your tasks</h2>
+            </div>
+
+            <div class="task-filters" aria-label="Filter tasks">
+              <button
+                class="filter-button is-active"
+                type="button"
+                data-filter="all"
+                aria-pressed="true"
+              >
+                All
+              </button>
+
+              <button
+                class="filter-button"
+                type="button"
+                data-filter="active"
+                aria-pressed="false"
+              >
+                Active
+              </button>
+
+              <button
+                class="filter-button"
+                type="button"
+                data-filter="completed"
+                aria-pressed="false"
+              >
+                Completed
+              </button>
+            </div>
+          </div>
+
+          <div class="task-tools">
+            <label class="sort-label" for="sort-select">
+              <span>Sort</span>
+
+              <select id="sort-select">
+                <option value="newest">Newest</option>
+                <option value="due-date">Due date</option>
+                <option value="priority">Priority</option>
+                <option value="active-first">Active first</option>
+                <option value="manual">Manual order</option>
+              </select>
+            </label>
+
+            <div class="task-cleanup-actions">
+              <button
+                id="clear-completed"
+                class="clear-completed"
+                type="button"
+                disabled
+              >
+                Clear completed
+              </button>
+
+              <button
+                id="start-fresh"
+                class="start-fresh"
+                type="button"
+                disabled
+              >
+                Start fresh
+              </button>
+            </div>
+          </div>
+
+          <label class="task-search" for="task-search-input">
+            <span class="sr-only">Search tasks</span>
+
+            <input
+              id="task-search-input"
+              type="search"
+              placeholder="Search tasks..."
+              autocomplete="off"
+            />
+          </label>
+
+          <p class="shortcut-hint">
+            Press <kbd>/</kbd> to search
+            <span aria-hidden="true">·</span>
+            <kbd>N</kbd> for a new task
+            <span aria-hidden="true">·</span>
+            <kbd>?</kbd> for shortcuts
+          </p>
+
+          <p id="task-count" class="task-count" aria-live="polite">
+            No tasks yet
+          </p>
+
+          <p id="empty-state" class="empty-state">
+            <span aria-hidden="true">✦</span>
+            Your list is clear.<br />
+            Add a task when you are ready.
+          </p>
+
+          <ul
+            id="task-list"
+            class="task-list"
+            role="list"
+            aria-label="Todo tasks"
+          ></ul>
+        </section>
+      </section>
+    </main>
+
+    <dialog
+      id="shortcut-dialog"
+      class="shortcut-dialog"
+      aria-labelledby="shortcut-dialog-title"
+    >
+      <div class="shortcut-dialog-content">
+        <p class="clear-dialog-kicker">KEYBOARD CONTROL</p>
+
+        <h2 id="shortcut-dialog-title">Momentum shortcuts</h2>
+
+        <div class="shortcut-list">
+          <div class="shortcut-row">
+            <span>Focus task search</span>
+            <kbd>/</kbd>
+          </div>
+
+          <div class="shortcut-row">
+            <span>Focus new task</span>
+            <kbd>N</kbd>
+          </div>
+
+          <div class="shortcut-row">
+            <span>Show shortcuts</span>
+            <kbd>?</kbd>
+          </div>
+
+          <div class="shortcut-row">
+            <span>Close dialog or clear search</span>
+            <kbd>Esc</kbd>
+          </div>
         </div>
 
-        <script src="script.js"></script>
-    </body>
+        <div class="shortcut-dialog-actions">
+          <button
+            id="shortcut-dialog-close"
+            class="dialog-confirm"
+            type="button"
+          >
+            Got it
+          </button>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog
+      id="clear-dialog"
+      class="clear-dialog"
+      aria-labelledby="clear-dialog-title"
+    >
+      <form method="dialog" class="clear-dialog-content">
+        <p class="clear-dialog-kicker">TASK CLEANUP</p>
+
+        <h2 id="clear-dialog-title">Clear completed tasks?</h2>
+
+        <p id="clear-dialog-message">
+          This will permanently remove completed tasks from Momentum.
+        </p>
+
+        <div class="clear-dialog-actions">
+          <button class="dialog-cancel" type="submit" value="cancel">
+            Cancel
+          </button>
+
+          <button
+            class="dialog-confirm"
+            type="submit"
+            value="confirm"
+          >
+            Clear tasks
+          </button>
+        </div>
+      </form>
+    </dialog>
+
+    <div
+      id="undo-toast"
+      class="undo-toast"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+      hidden
+    >
+      <p id="undo-message"></p>
+
+      <button id="undo-button" type="button">Undo</button>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
 </html>
