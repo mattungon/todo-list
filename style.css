@@ -53,7 +53,7 @@ body {
       transparent 24rem
     ),
     var(--background);
-  font-family: "DM Sans", Arial, sans-serif;
+  font-family: "Nunito", Arial, sans-serif;
 }
 
 html[data-theme="day"] body {
@@ -186,13 +186,13 @@ textarea:focus-visible {
 
 .eyebrow {
   margin: 0;
-  color: #d1c8ff;
+  color: #ce5af1;
 }
 
 .app-header h1 {
   margin: 4px 0 0;
   color: var(--text);
-  font-family: "Outfit", Arial, sans-serif;
+  font-family: "Fredoka", Arial, sans-serif;
   font-size: clamp(1.45rem, 3vw, 1.9rem);
   font-weight: 800;
   letter-spacing: -0.05em;
@@ -218,7 +218,7 @@ textarea:focus-visible {
 .companion-copy h2 {
   margin: 4px 0 3px;
   color: var(--text);
-  font-family: "Outfit", Arial, sans-serif;
+  font-family: "Fredoka", Arial, sans-serif;
   font-size: 1.1rem;
   font-weight: 700;
 }
@@ -326,7 +326,7 @@ textarea:focus-visible {
 .panel-heading h2 {
   margin: 4px 0 0;
   color: var(--text);
-  font-family: "Outfit", Arial, sans-serif;
+ font-family: "Fredoka", Arial, sans-serif;
   font-size: 1.2rem;
   font-weight: 700;
   letter-spacing: -0.03em;
@@ -684,8 +684,9 @@ textarea:focus-visible {
 
 .task-entry-row {
   display: flex;
+  flex-direction: column;
   gap: 10px;
-  align-items: center;
+  align-items: stretch;
 }
 
 .task-title-input {
@@ -722,15 +723,16 @@ textarea:focus-visible {
 .add-button {
   position: relative;
   display: inline-flex;
-  flex: 0 0 auto;
+  align-self: flex-end;
   gap: 7px;
   align-items: center;
   justify-content: center;
-  height: 54px;
+  min-height: 46px;
+  height: auto;
   padding: 0 18px;
   overflow: hidden;
   border: 0;
-  border-radius: 15px;
+  border-radius: 13px;
   color: #ffffff;
   background: linear-gradient(135deg, var(--purple), var(--pink));
   box-shadow: 0 9px 18px rgba(169, 150, 255, 0.22);
@@ -1012,7 +1014,7 @@ html[data-theme="day"] .mimo-eye {
 .task-heading h2 {
   margin: 4px 0 0;
   color: var(--text);
-  font-family: "Outfit", Arial, sans-serif;
+  font-family: "Fredoka", Arial, sans-serif;
   font-size: 1.2rem;
   font-weight: 700;
   letter-spacing: -0.03em;
@@ -1197,7 +1199,7 @@ html[data-theme="day"] .mimo-eye {
   border-radius: 6px;
   color: var(--purple);
   background: rgba(169, 150, 255, 0.1);
-  font-family: "DM Sans", Arial, sans-serif;
+  font-family: "Nunito", Arial, sans-serif;
   font-size: 0.7rem;
   font-weight: 800;
   line-height: 1;
@@ -2128,7 +2130,7 @@ html[data-theme="day"] .task-edit-input {
 .clear-dialog h2,
 .shortcut-dialog-content h2 {
   margin: 7px 0 9px;
-  font-family: "Outfit", Arial, sans-serif;
+  font-family: "Fredoka", Arial, sans-serif;
   font-size: 1.35rem;
   letter-spacing: -0.03em;
 }
@@ -2419,6 +2421,39 @@ html[data-theme="day"] .dialog-cancel {
   100% {
     box-shadow: var(--shadow);
   }
+}
+/* Softer, fluffier typography */
+
+.app-header h1 {
+  letter-spacing: -0.04em;
+}
+
+.companion-copy h2,
+.panel-heading h2,
+.task-heading h2 {
+  letter-spacing: -0.02em;
+}
+
+.add-button,
+.filter-button,
+.clear-completed,
+.start-fresh,
+.priority-badge,
+.task-details-heading,
+.section-label,
+.companion-label,
+.eyebrow {
+  letter-spacing: 0.06em;
+}
+
+.task-text {
+  font-weight: 700;
+}
+
+.task-title-input,
+.task-details-label textarea,
+.task-search input {
+  font-weight: 600;
 }
 
 /* Responsive dashboard */
