@@ -183,6 +183,9 @@ window.addEventListener("keydown", (event) => {
 
 taskForm.addEventListener("submit", handleTaskSubmit);
 
+taskInput.addEventListener("input", resizeTaskInput);
+resizeTaskInput();
+
 if (themeToggle) {
     themeToggle.addEventListener("click", () => {
         const nextTheme =
@@ -196,6 +199,7 @@ if (themeToggle) {
             console.error("Momentum could not save theme preference:", error);
             showSaveStatus(storageMessages.failed);
         }
+
 
         showCompanionMessage(
             nextTheme === "day"
@@ -214,6 +218,19 @@ if (themeToggle) {
         triggerMimoReaction(nextTheme === "day" ? "is-proud" : "is-relieved");
     });
 }
+taskInput.addEventListener("keydown", (event) => {
+    const shouldSubmit =
+        event.key === "Enter" &&
+        !event.shiftKey &&
+        !event.ctrlKey &&
+        !event.metaKey &&
+        !event.altKey;
+
+    if (shouldSubmit) {
+        event.preventDefault();
+        taskForm.requestSubmit();
+    }
+});
 
 filterButtons.forEach((button) => {
     button.addEventListener("click", () => {
@@ -572,6 +589,17 @@ function loadThemePreference() {
 }
 
 /* Shared helpers */
+
+function resizeTaskInput() {
+    taskInput.style.height = "auto";
+
+    const maximumHeight = 180;
+    const nextHeight = Math.min(taskInput.scrollHeight, maximumHeight);
+
+    taskInput.style.height = `${nextHeight}px`;
+    taskInput.style.overflowY =
+        taskInput.scrollHeight > maximumHeight ? "auto" : "hidden";
+}
 
 function showCompanionMessage(messages) {
     const randomIndex = Math.floor(Math.random() * messages.length);
@@ -1355,6 +1383,8 @@ function handleTaskSubmit(event) {
     triggerMimoReaction("is-skeptical");
 
     taskInput.value = "";
+    resizeTaskInput();
+
     taskDetailsInput.value = "";
     dueDateInput.value = "";
     taskInput.focus();
