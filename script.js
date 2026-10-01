@@ -589,6 +589,64 @@ function loadThemePreference() {
 }
 
 /* Shared helpers */
+function showCompletionSparkles(sourceButton) {
+    const taskItem = sourceButton.closest(".task-item");
+
+    if (!taskItem) {
+        return;
+    }
+
+    const buttonRect = sourceButton.getBoundingClientRect();
+    const itemRect = taskItem.getBoundingClientRect();
+
+    for (let index = 0; index < 3; index += 1) {
+        const sparkle = document.createElement("span");
+        sparkle.className = "completion-sparkle";
+        sparkle.textContent = index === 1 ? "✧" : "✦";
+
+        sparkle.style.left = `${buttonRect.left - itemRect.left + 10}px`;
+        sparkle.style.top = `${buttonRect.top - itemRect.top + 8}px`;
+
+        sparkle.addEventListener("animationend", () => {
+            sparkle.remove();
+        });
+
+        taskItem.appendChild(sparkle);
+    }
+}
+
+function showCompletionShootingStars() {
+    const reducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    if (reducedMotion) {
+        return;
+    }
+
+    const sky = document.createElement("div");
+    sky.className = "completion-sky";
+    sky.setAttribute("aria-hidden", "true");
+
+    const starCount = 3;
+
+    for (let index = 0; index < starCount; index += 1) {
+        const star = document.createElement("span");
+        star.className = "shooting-star";
+
+        star.style.left = `${10 + index * 25 + Math.random() * 8}%`;
+        star.style.top = `${8 + Math.random() * 30}%`;
+        star.style.animationDelay = `${index * 110}ms`;
+
+        sky.appendChild(star);
+    }
+
+    document.body.appendChild(sky);
+
+    window.setTimeout(() => {
+        sky.remove();
+    }, 1250);
+}
 
 function resizeTaskInput() {
     taskInput.style.height = "auto";
@@ -1104,6 +1162,11 @@ function createTaskElement(task) {
 
         task.completed = !task.completed;
         task.completedAt = task.completed ? new Date().toISOString() : null;
+
+        if (task.completed) {
+            showCompletionSparkles(completeButton);
+            showCompletionShootingStars();
+        }
 
         tasks.splice(taskIndex, 1);
 
